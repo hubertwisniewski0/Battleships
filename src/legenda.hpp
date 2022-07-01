@@ -1,82 +1,86 @@
-class CLegenda
+class Legend
 {
     private:
-        SDL_Surface* legenda = NULL;
-        SDL_Surface* legenda_kolory = NULL;
-        Text* Tekst = NULL;
-        SDL_Surface* napisy[8] = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
-        bool Legenda_OK = true;
+        SDL_Surface* legend = NULL;
+        SDL_Surface* legendColors = NULL;
+        Text* text = NULL;
+        SDL_Surface* texts[8] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+        bool legendOk = true;
+
     public:
-        CLegenda(Text* T)
+        Legend(Text* T)
         {
-            legenda = SDL_CreateRGBSurface(0,300,180,24,0,0,0,0);
-            if(legenda == NULL)
+            legend = SDL_CreateRGBSurface(0, 300, 180, 24, 0, 0, 0, 0);
+            if(legend == NULL)
             {
                 wiadomosc_o_bledzie(std::string("SDL_CreateRGBSurface: ") + std::string(SDL_GetError()));
-                Legenda_OK = false;
+                legendOk = false;
                 return;
             }
-            legenda_kolory = SDL_CreateRGBSurface(0,32,152,24,0,0,0,0);
-            if(legenda_kolory == NULL)
+            legendColors = SDL_CreateRGBSurface(0, 32, 152, 24, 0, 0, 0, 0);
+            if(legendColors == NULL)
             {
                 wiadomosc_o_bledzie(std::string("SDL_CreateRGBSurface: ") + std::string(SDL_GetError()));
-                Legenda_OK = false;
+                legendOk = false;
                 return;
             }
-            Tekst = T;
-            SDL_Rect pole;
-            pole.w = 28;
-            pole.h = 28;
-            pole.x = 2;
-            uint32_t kolory[5];
-            kolory[0] = 0x0000FF;
-            kolory[1] = 0x00FF00;
-            kolory[2] = 0x7F7F7F;
-            kolory[3] = 0xFFFF00;
-            kolory[4] = 0xFF0000;
-            SDL_FillRect(legenda_kolory,NULL,0xFFFFFF);
+            text = T;
+            SDL_Rect field;
+            field.w = 28;
+            field.h = 28;
+            field.x = 2;
+            uint32_t colors[5];
+            colors[0] = 0x0000FF;
+            colors[1] = 0x00FF00;
+            colors[2] = 0x7F7F7F;
+            colors[3] = 0xFFFF00;
+            colors[4] = 0xFF0000;
+            SDL_FillRect(legendColors, NULL, 0xFFFFFF);
             for(uint8_t i = 0; i < 5; i++)
             {
-                pole.y = i*(pole.h+2)+2;
-                SDL_FillRect(legenda_kolory,&pole,kolory[i]);
+                field.y = i * (field.h + 2) + 2;
+                SDL_FillRect(legendColors, &field, colors[i]);
             }
-            napisy[0] = Tekst->renderText("Legenda:");
-            napisy[1] = Tekst->renderText("Puste/nieznane pole");
-            napisy[2] = Tekst->renderText("Statek");
-            napisy[3] = Tekst->renderText("Pudło");
-            napisy[4] = Tekst->renderText("Trafiony");
-            napisy[5] = Tekst->renderText("Zatopiony");
-            napisy[6] = Tekst->renderText("N = Nowa gra");
-            napisy[7] = Tekst->renderText("ESC = Wyjście");
+            texts[0] = text->renderText("Legend:");
+            texts[1] = text->renderText("Empty/unknown field");
+            texts[2] = text->renderText("Ship");
+            texts[3] = text->renderText("Miss");
+            texts[4] = text->renderText("Hit");
+            texts[5] = text->renderText("Sunk");
+            texts[6] = text->renderText("N = New game");
+            texts[7] = text->renderText("ESC = Exit");
             for(uint8_t i = 0; i < 6; i++)
-                Tekst->drawText(napisy[i], legenda, 45, 13 - napisy[i]->h / 2 + 30 * i);
-            Tekst->drawText(napisy[6], legenda, 300 - napisy[6]->w, 180 - napisy[7]->h - napisy[6]->h);
-            Tekst->drawText(napisy[7], legenda, 300 - napisy[7]->w, 180 - napisy[7]->h);
-            SDL_Rect legenda_kolory_pozycja;
-            legenda_kolory_pozycja.x = 0;
-            legenda_kolory_pozycja.y = 28;
-            SDL_BlitSurface(legenda_kolory,NULL,legenda,&legenda_kolory_pozycja);
+                text->drawText(texts[i], legend, 45, 13 - texts[i]->h / 2 + 30 * i);
+            text->drawText(texts[6], legend, 300 - texts[6]->w, 180 - texts[7]->h - texts[6]->h);
+            text->drawText(texts[7], legend, 300 - texts[7]->w, 180 - texts[7]->h);
+            SDL_Rect legendColorsPosition;
+            legendColorsPosition.x = 0;
+            legendColorsPosition.y = 28;
+            SDL_BlitSurface(legendColors, NULL, legend, &legendColorsPosition);
         }
-        ~CLegenda()
+
+        ~Legend()
         {
-            if(legenda != NULL)
-                SDL_FreeSurface(legenda);
-            if(legenda_kolory != NULL)
-                SDL_FreeSurface(legenda_kolory);
+            if(legend != NULL)
+                SDL_FreeSurface(legend);
+            if(legendColors != NULL)
+                SDL_FreeSurface(legendColors);
             for(uint8_t i = 0; i < 8; i++)
-                if(napisy[i] != NULL)
-                    SDL_FreeSurface(napisy[i]);
+                if(texts[i] != NULL)
+                    SDL_FreeSurface(texts[i]);
         }
+
         bool ok()
         {
-            return Legenda_OK;
+            return legendOk;
         }
-        void rysuj(SDL_Surface* cel, uint16_t x, uint16_t y)
+
+        void draw(SDL_Surface* target, uint16_t x, uint16_t y)
         {
-            SDL_Rect pozycja;
-            pozycja.x = x;
-            pozycja.y = y;
-            SDL_BlitSurface(legenda,NULL,cel,&pozycja);
+            SDL_Rect position;
+            position.x = x;
+            position.y = y;
+            SDL_BlitSurface(legend, NULL, target, &position);
         }
 
 };

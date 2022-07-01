@@ -4,7 +4,7 @@ class Window
         SDL_Window* window = NULL;
         Board* board[2] = {NULL, NULL};
         Text* text = NULL;
-        CLegenda* legend = NULL;
+        Legend* legend = NULL;
         CNapisy* texts = NULL;
         bool windowOk = true;
 
@@ -33,7 +33,7 @@ class Window
                 windowOk = false;
                 return;
             }
-            legend = new CLegenda(text);
+            legend = new Legend(text);
             if(!legend->ok())
             {
                 windowOk = false;
@@ -71,7 +71,7 @@ class Window
             SDL_FillRect(SDL_GetWindowSurface(window), NULL, 0);
             for(uint8_t i = 0; i < 2; i++)
                 board[i]->draw(SDL_GetWindowSurface(window), 29 + 360 * i + XOFFSET, 59);
-            legend->rysuj(SDL_GetWindowSurface(window), 389 + XOFFSET, 374);
+            legend->draw(SDL_GetWindowSurface(window), 389 + XOFFSET, 374);
             texts->rysuj(SDL_GetWindowSurface(window), victory);
             SDL_UpdateWindowSurface(window);
         }
