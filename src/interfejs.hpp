@@ -1,137 +1,147 @@
-class CInterfejs
+class GUI
 {
     private:
-        COkno* Okno = NULL;
-        CZegar* Zegar = NULL;
-        SDL_Event zdarzenie;
-        bool zakoncz = false;
-        uint8_t wygrana = 0;
-        Game* Gra;
-        Enemy* Wrog;
+        COkno* window = NULL;
+        CZegar* timer = NULL;
+        SDL_Event event;
+        bool quit = false;
+        uint8_t victory = 0;
+        Game* game;
+        Enemy* enemy;
         uint8_t x,y;
-        bool Interfejs_OK = true;
-        void rysuj_plansze()
+        bool guiOk = true;
+
+        void drawBoards()
         {
             int p;
+            // For each board
             for(uint8_t i = 0; i < 2; i++)
             {
+                // For each column
                 for(uint8_t j = 0; j < 10; j++)
                 {
+                    // For each row
                     for(uint8_t k = 0; k < 10; k++)
                     {
-                        p = Gra->field(i, j, k);
-                        Okno->akt_plansze(i,j,k,(p == 1 && i == 1 && wygrana == 0 ? 0 : p));
+                        p = game->field(i, j, k);
+                        window->akt_plansze(i, j, k, (p == 1 && i == 1 && victory == 0 ? 0 : p));
                     }
                 }
             }
-            Okno->rysuj(wygrana);
+            window->rysuj(victory);
         }
+
         void reset()
         {
-            Gra->newGame();
-            Wrog->reset();
-            Okno->reset_napisy();
-            wygrana = 0;
+            game->newGame();
+            enemy->reset();
+            window->reset_napisy();
+            victory = 0;
         }
-        void wygrana_s(uint8_t w)
+
+        void announceVictory(uint8_t w)
         {
-            wygrana = w;
-            rysuj_plansze();
-            Okno->wygrana(wygrana);
+            victory = w;
+            drawBoards();
+            window->wygrana(victory);
         }
+
     public:
-        CInterfejs(Game* G, Enemy* K)
+        GUI(Game* G, Enemy* K)
         {
             if(SDL_Init(SDL_INIT_VIDEO) != 0)
             {
                 wiadomosc_o_bledzie(std::string("SDL_Init: ") + std::string(SDL_GetError()));
-                Interfejs_OK = false;
+                guiOk = false;
                 return;
             }
-            Okno = new COkno;
-            if(!Okno->ok())
+            window = new COkno;
+            if(!window->ok())
             {
-                Interfejs_OK = false;
+                guiOk = false;
                 return;
             }
-            Zegar = new CZegar;
-            if(!Zegar->ok())
+            timer = new CZegar;
+            if(!timer->ok())
             {
-                Interfejs_OK = false;
+                guiOk = false;
                 return;
             }
-            Gra = G;
-            Wrog = K;
+            game = G;
+            enemy = K;
         }
-        ~CInterfejs()
+
+        ~GUI()
         {
-            if(Zegar != NULL)
-                delete Zegar;
-            if(Okno != NULL)
-                delete Okno;
+            if(timer != NULL)
+                delete timer;
+            if(window != NULL)
+                delete window;
             if(SDL_WasInit(0) != 0)
                 SDL_Quit();
         }
+
         bool ok()
         {
-            return Interfejs_OK;
+            return guiOk;
         }
+        
         void start()
         {
             int s;
-            rysuj_plansze();
-            while(!zakoncz)
+            drawBoards();
+            while(!quit)
             {
-                while(SDL_PollEvent(&zdarzenie))
+                while(SDL_PollEvent(&event))
                 {
-                    if(zdarzenie.type == SDL_QUIT)
-                        zakoncz = true;
-                    if(zdarzenie.type == SDL_MOUSEMOTION)
-                        Okno->rysuj(wygrana);
-                    if(zdarzenie.type == SDL_MOUSEBUTTONDOWN &&
-                    zdarzenie.button.x -XOFFSET >= 390 && zdarzenie.button.x -XOFFSET < 690 &&
-                    zdarzenie.button.y >= 60 && zdarzenie.button.y < 360 &&
-                    !wygrana)
+                    if(event.type == SDL_QUIT)
+                        quit = true;
+                    if(event.type == SDL_MOUSEMOTION)
+                        window->rysuj(victory);
+                    if(event.type == SDL_MOUSEBUTTONDOWN &&
+                       event.button.x - XOFFSET >= 390 && event.button.x - XOFFSET < 690 &&
+                       event.button.y >= 60 && event.button.y < 360 &&
+                       !victory)
                     {
-                        x = (zdarzenie.button.x -XOFFSET)/30-13;
-                        y = zdarzenie.button.y/30-2;
-                        s = Gra->shot(1, x, y);
+                        x = (event.button.x - XOFFSET) / 30 - 13;
+                        y = event.button.y / 30 - 2;
+                        s = game->shot(1, x, y);
                         if(s != 0 && s != 1 && s != 4 && s != 5)
                             continue;
-                        Okno->akt_napisy(0,x,y,s,false);
+                        window->akt_napisy(0, x, y, s, false);
                         if(s == 4)
-                            wygrana_s(1);
+                            announceVictory(1);
                         else
                         {
-                            s = Wrog->move(&x, &y);
+                            s = enemy->move(&x, &y);
                             if(s == 7)
                                 continue;
-                            Okno->akt_napisy(1,x,y,s,false);
+                            window->akt_napisy(1, x, y, s, false);
                             if(s == 4)
-                                wygrana_s(2);
+                                announceVictory(2);
                         }
-                        rysuj_plansze();
+                        drawBoards();
                     }
-                    if(zdarzenie.type == SDL_KEYDOWN)
+                    if(event.type == SDL_KEYDOWN)
                     {
-                        switch(zdarzenie.key.keysym.scancode)
+                        switch(event.key.keysym.scancode)
                         {
                             case(SDL_SCANCODE_N):
                             {
                                 reset();
-                                rysuj_plansze();
+                                drawBoards();
                                 break;
                             }
                             case(SDL_SCANCODE_ESCAPE):
                             {
-                                zakoncz = true;
+                                quit = true;
                                 break;
                             }
                             default: {break;}
                         }
                     }
                 }
-                Zegar->synchronizuj();
+                timer->synchronizuj();
             }
         }
 };

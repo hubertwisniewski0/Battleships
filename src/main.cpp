@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
     srand(time(NULL));
     Game Gra;
     Enemy Wrog(&Gra);
-    CInterfejs Interfejs(&Gra,&Wrog);
+    GUI Interfejs(&Gra, &Wrog);
     if(!Interfejs.ok())
         return 1;
     Interfejs.start();
