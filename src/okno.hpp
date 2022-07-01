@@ -2,7 +2,7 @@ class Window
 {
     private:
         SDL_Window* window = NULL;
-        CPlansza* board[2] = {NULL, NULL};
+        Board* board[2] = {NULL, NULL};
         CTekst* text = NULL;
         CLegenda* legend = NULL;
         CNapisy* texts = NULL;
@@ -20,7 +20,7 @@ class Window
             }
             for(uint8_t i = 0; i < 2; i++)
             {
-                board[i] = new CPlansza;
+                board[i] = new Board;
                 if(!board[i]->ok())
                 {
                     windowOk = false;
@@ -70,7 +70,7 @@ class Window
         {
             SDL_FillRect(SDL_GetWindowSurface(window), NULL, 0);
             for(uint8_t i = 0; i < 2; i++)
-                board[i]->rysuj(SDL_GetWindowSurface(window), 29 + 360 * i + XOFFSET, 59);
+                board[i]->draw(SDL_GetWindowSurface(window), 29 + 360 * i + XOFFSET, 59);
             legend->rysuj(SDL_GetWindowSurface(window), 389 + XOFFSET, 374);
             texts->rysuj(SDL_GetWindowSurface(window), victory);
             SDL_UpdateWindowSurface(window);
@@ -78,7 +78,7 @@ class Window
 
         void updateBoards(uint8_t i, uint8_t x, uint8_t y, uint8_t s)
         {
-            board[i]->aktualizuj(x, y, s);
+            board[i]->update(x, y, s);
         }
 
         void resetTexts()

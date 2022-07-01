@@ -1,55 +1,59 @@
-class CPlansza
+class Board
 {
     private:
-        SDL_Surface* plansza = NULL;
-        SDL_Rect pole;
-        bool Plansza_OK = true;
+        SDL_Surface* board = NULL;
+        SDL_Rect field;
+        bool boardOk = true;
     public:
-        CPlansza()
+        Board()
         {
-            plansza = SDL_CreateRGBSurface(0,302,302,24,0,0,0,0);
-            if(plansza == NULL)
+            board = SDL_CreateRGBSurface(0, 302, 302, 24, 0, 0, 0, 0);
+            if(board == NULL)
             {
                 wiadomosc_o_bledzie(std::string("SDL_CreateRGBSurface: ") + std::string(SDL_GetError()));
-                Plansza_OK = false;
+                boardOk = false;
                 return;
             }
-            pole.h = 28;
-            pole.w = 28;
-            SDL_FillRect(plansza,NULL,0xFFFFFF);
+            field.h = 28;
+            field.w = 28;
+            SDL_FillRect(board, NULL, 0xFFFFFF);
         }
-        ~CPlansza()
+
+        ~Board()
         {
-            if(plansza != NULL)
-                SDL_FreeSurface(plansza);
+            if(board != NULL)
+                SDL_FreeSurface(board);
         }
+
         bool ok()
         {
-            return Plansza_OK;
+            return boardOk;
         }
-        void aktualizuj(uint8_t x, uint8_t y, uint8_t s)
+
+        void update(uint8_t x, uint8_t y, uint8_t s)
         {
             if(x > 9 || y > 9)
                 return;
-            pole.x = x*(pole.w+2)+2;
-            pole.y = y*(pole.h+2)+2;
-            uint32_t kolor;
+            field.x = x * (field.w + 2) + 2;
+            field.y = y * (field.h + 2) + 2;
+            uint32_t color;
             switch(s)
             {
-                case(0): {kolor = 0x0000FF; break;}
-                case(1): {kolor = 0x00FF00; break;}
-                case(2): {kolor = 0x7F7F7F; break;}
-                case(3): {kolor = 0xFFFF00; break;}
-                case(6): {kolor = 0xFF0000; break;}
-                default: {kolor = 0x000000; break;}
+                case(0): { color = 0x0000FF; break;}
+                case(1): { color = 0x00FF00; break;}
+                case(2): { color = 0x7F7F7F; break;}
+                case(3): { color = 0xFFFF00; break;}
+                case(6): { color = 0xFF0000; break;}
+                default: { color = 0x000000; break;}
             }
-            SDL_FillRect(plansza,&pole,kolor);
+            SDL_FillRect(board, &field, color);
         }
-        void rysuj(SDL_Surface* cel, uint16_t x, uint16_t y)
+
+        void draw(SDL_Surface* target, uint16_t x, uint16_t y)
         {
-            SDL_Rect pozycja;
-            pozycja.x = x;
-            pozycja.y = y;
-            SDL_BlitSurface(plansza,NULL,cel,&pozycja);
+            SDL_Rect position;
+            position.x = x;
+            position.y = y;
+            SDL_BlitSurface(board, NULL, target, &position);
         }
 };
