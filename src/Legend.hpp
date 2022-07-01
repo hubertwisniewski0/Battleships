@@ -5,28 +5,24 @@
 #ifndef BATTLESHIPS_LEGEND_HPP
 #define BATTLESHIPS_LEGEND_HPP
 
-class Legend
-{
+class Legend {
 private:
-    SDL_Surface* legend = NULL;
-    SDL_Surface* legendColors = NULL;
-    Text* text = NULL;
-    SDL_Surface* texts[8] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+    SDL_Surface *legend = NULL;
+    SDL_Surface *legendColors = NULL;
+    Text *text = NULL;
+    SDL_Surface *texts[8] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
     bool legendOk = true;
 
 public:
-    Legend(Text* T)
-    {
+    Legend(Text *T) {
         legend = SDL_CreateRGBSurface(0, 300, 180, 24, 0, 0, 0, 0);
-        if(legend == NULL)
-        {
+        if (legend == NULL) {
             errorMessage(std::string("SDL_CreateRGBSurface: ") + std::string(SDL_GetError()));
             legendOk = false;
             return;
         }
         legendColors = SDL_CreateRGBSurface(0, 32, 152, 24, 0, 0, 0, 0);
-        if(legendColors == NULL)
-        {
+        if (legendColors == NULL) {
             errorMessage(std::string("SDL_CreateRGBSurface: ") + std::string(SDL_GetError()));
             legendOk = false;
             return;
@@ -43,8 +39,7 @@ public:
         colors[3] = 0xFFFF00;
         colors[4] = 0xFF0000;
         SDL_FillRect(legendColors, NULL, 0xFFFFFF);
-        for(uint8_t i = 0; i < 5; i++)
-        {
+        for (uint8_t i = 0; i < 5; i++) {
             field.y = i * (field.h + 2) + 2;
             SDL_FillRect(legendColors, &field, colors[i]);
         }
@@ -56,7 +51,7 @@ public:
         texts[5] = text->renderText("Sunk");
         texts[6] = text->renderText("N = New game");
         texts[7] = text->renderText("ESC = Exit");
-        for(uint8_t i = 0; i < 6; i++)
+        for (uint8_t i = 0; i < 6; i++)
             text->drawText(texts[i], legend, 45, 13 - texts[i]->h / 2 + 30 * i);
         text->drawText(texts[6], legend, 300 - texts[6]->w, 180 - texts[7]->h - texts[6]->h);
         text->drawText(texts[7], legend, 300 - texts[7]->w, 180 - texts[7]->h);
@@ -66,24 +61,21 @@ public:
         SDL_BlitSurface(legendColors, NULL, legend, &legendColorsPosition);
     }
 
-    ~Legend()
-    {
-        if(legend != NULL)
+    ~Legend() {
+        if (legend != NULL)
             SDL_FreeSurface(legend);
-        if(legendColors != NULL)
+        if (legendColors != NULL)
             SDL_FreeSurface(legendColors);
-        for(uint8_t i = 0; i < 8; i++)
-            if(texts[i] != NULL)
+        for (uint8_t i = 0; i < 8; i++)
+            if (texts[i] != NULL)
                 SDL_FreeSurface(texts[i]);
     }
 
-    bool ok()
-    {
+    bool ok() {
         return legendOk;
     }
 
-    void draw(SDL_Surface* target, uint16_t x, uint16_t y)
-    {
+    void draw(SDL_Surface *target, uint16_t x, uint16_t y) {
         SDL_Rect position;
         position.x = x;
         position.y = y;

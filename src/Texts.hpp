@@ -5,34 +5,32 @@
 #ifndef BATTLESHIPS_TEXTS_HPP
 #define BATTLESHIPS_TEXTS_HPP
 
-class Texts
-{
+class Texts {
 private:
-    SDL_Surface* texts[8] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-    SDL_Surface* letters[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-    SDL_Surface* numbers[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-    SDL_Surface* readings[10][10] = {
-            {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL},
-            {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL},
-            {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL},
-            {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL},
-            {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL},
-            {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL},
-            {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL},
-            {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL},
-            {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL},
-            {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}};
-    SDL_Surface* playerReading = NULL;
-    SDL_Surface* enemyReading = NULL;
-    SDL_Surface* sPlayer = NULL;
-    SDL_Surface* sEnemy = NULL;
-    Text* text = NULL;
+    SDL_Surface *texts[8] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+    SDL_Surface *letters[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+    SDL_Surface *numbers[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+    SDL_Surface *readings[10][10] = {
+            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}};
+    SDL_Surface *playerReading = NULL;
+    SDL_Surface *enemyReading = NULL;
+    SDL_Surface *sPlayer = NULL;
+    SDL_Surface *sEnemy = NULL;
+    Text *text = NULL;
     int minOffset;
     bool textsOk = true;
 
 public:
-    Texts(Text* T)
-    {
+    Texts(Text *T) {
         text = T;
         minOffset = text->getMinOffset();
         texts[0] = text->renderText("Player's sea");
@@ -43,10 +41,8 @@ public:
         texts[5] = text->renderText("Miss");
         texts[6] = text->renderText("Hit");
         texts[7] = text->renderText("Sunk");
-        for(uint8_t i = 0; i < 8; i++)
-        {
-            if(texts[i] == NULL)
-            {
+        for (uint8_t i = 0; i < 8; i++) {
+            if (texts[i] == NULL) {
                 errorMessage(std::string("Rendering text n") + std::to_string((int) i) + std::string(": ") +
                              std::string(TTF_GetError()));
                 textsOk = false;
@@ -56,29 +52,22 @@ public:
         char t[2];
         char c[3];
         char w[4];
-        for(uint8_t i = 0; i < 10; i++)
-        {
-            t[0] = 0x41+i;
+        for (uint8_t i = 0; i < 10; i++) {
+            t[0] = 0x41 + i;
             t[1] = 0;
             letters[i] = text->renderText(t);
-            for(uint8_t j = 0; j < 10; j++)
-            {
-                if(j < 9)
-                {
-                    c[0] = 0x31+j;
+            for (uint8_t j = 0; j < 10; j++) {
+                if (j < 9) {
+                    c[0] = 0x31 + j;
                     c[1] = 0;
-                }
-                else
-                {
+                } else {
                     c[0] = '1';
                     c[1] = '0';
                     c[2] = 0;
                 }
-                if(i == 0)
-                {
+                if (i == 0) {
                     numbers[j] = text->renderText(c);
-                    if(numbers[j] == NULL)
-                    {
+                    if (numbers[j] == NULL) {
                         errorMessage(std::string("Rendering text c") + std::to_string((int) j) + std::string(": ") +
                                      std::string(TTF_GetError()));
                         textsOk = false;
@@ -86,11 +75,10 @@ public:
                     }
                 }
                 w[0] = 0;
-                strcat(w,t);
-                strcat(w,c);
+                strcat(w, t);
+                strcat(w, c);
                 readings[i][j] = text->renderText(w);
-                if(readings[i][j] == NULL)
-                {
+                if (readings[i][j] == NULL) {
                     errorMessage(
                             std::string("Rendering text w") + std::to_string((int) i) + std::to_string((int) j) +
                             std::string(": ") + std::string(TTF_GetError()));
@@ -98,8 +86,7 @@ public:
                     return;
                 }
             }
-            if(letters[i] == NULL)
-            {
+            if (letters[i] == NULL) {
                 errorMessage(std::string("Rendering text t") + std::to_string((int) i) + std::string(": ") +
                              std::string(TTF_GetError()));
                 textsOk = false;
@@ -108,43 +95,39 @@ public:
         }
     }
 
-    ~Texts()
-    {
-        for(uint8_t i = 0; i < 10; i++)
-        {
-            if(letters[i] != NULL)
+    ~Texts() {
+        for (uint8_t i = 0; i < 10; i++) {
+            if (letters[i] != NULL)
                 SDL_FreeSurface(letters[i]);
-            if(numbers[i] != NULL)
+            if (numbers[i] != NULL)
                 SDL_FreeSurface(numbers[i]);
-            for(uint8_t j = 0; j < 10; j++)
-                if(readings[i][j] != NULL)
+            for (uint8_t j = 0; j < 10; j++)
+                if (readings[i][j] != NULL)
                     SDL_FreeSurface(readings[i][j]);
         }
-        for(uint8_t i = 0; i < 8; i++)
-            if(texts[i] != NULL)
+        for (uint8_t i = 0; i < 8; i++)
+            if (texts[i] != NULL)
                 SDL_FreeSurface(texts[i]);
     }
-    bool ok()
-    {
+
+    bool ok() {
         return textsOk;
     }
 
-    void draw(SDL_Surface* target)
-    {
+    void draw(SDL_Surface *target) {
         text->drawText(texts[0], target, 180 - texts[0]->w / 2 + XOFFSET, 15 - texts[0]->h / 2);
         text->drawText(texts[1], target, 540 - texts[1]->w / 2 + XOFFSET, 15 - texts[1]->h / 2);
         text->drawText(texts[2], target, 30 + XOFFSET, 375 - texts[2]->h / 2);
         text->drawText(texts[3], target, 30 + XOFFSET, 375 - texts[3]->h / 2 + minOffset);
-        if(playerReading != NULL)
+        if (playerReading != NULL)
             text->drawText(playerReading, target, 90 + XOFFSET, 375 - playerReading->h / 2);
-        if(enemyReading != NULL)
+        if (enemyReading != NULL)
             text->drawText(enemyReading, target, 90 + XOFFSET, 375 - enemyReading->h / 2 + minOffset);
-        if(sPlayer != NULL)
+        if (sPlayer != NULL)
             text->drawText(sPlayer, target, 150 + XOFFSET, 375 - sPlayer->h / 2);
-        if(sEnemy != NULL)
+        if (sEnemy != NULL)
             text->drawText(sEnemy, target, 150 + XOFFSET, 375 - sEnemy->h / 2 + minOffset);
-        for(uint8_t i = 0; i < 10; i++)
-        {
+        for (uint8_t i = 0; i < 10; i++) {
             text->drawText(letters[i], target, 45 + (30 * i) - letters[i]->w / 2 + XOFFSET, 45 - letters[i]->h / 2);
             text->drawText(letters[i], target, 405 + (30 * i) - letters[i]->w / 2 + XOFFSET, 45 - letters[i]->h / 2);
             text->drawText(numbers[i], target, 15 - numbers[i]->w / 2 + XOFFSET, 75 + (30 * i) - numbers[i]->h / 2);
@@ -152,36 +135,53 @@ public:
         }
     }
 
-    void updateTexts(uint8_t i, uint8_t x, uint8_t y, uint8_t s, bool reset)
-    {
-        if(reset)
-        {
+    void updateTexts(uint8_t i, uint8_t x, uint8_t y, uint8_t s, bool reset) {
+        if (reset) {
             playerReading = NULL;
             enemyReading = NULL;
             sPlayer = NULL;
             sEnemy = NULL;
             return;
         }
-        if(i == 0)
-        {
+        if (i == 0) {
             playerReading = readings[x][y];
-            switch(s)
-            {
-                case(0): { sPlayer = texts[5];break;}
-                case(1): { sPlayer = texts[6];break;}
-                case(4): { sPlayer = texts[4];break;}
-                case(5): { sPlayer = texts[7];break;}
+            switch (s) {
+                case (0): {
+                    sPlayer = texts[5];
+                    break;
+                }
+                case (1): {
+                    sPlayer = texts[6];
+                    break;
+                }
+                case (4): {
+                    sPlayer = texts[4];
+                    break;
+                }
+                case (5): {
+                    sPlayer = texts[7];
+                    break;
+                }
             }
-        }
-        else
-        {
+        } else {
             enemyReading = readings[x][y];
-            switch(s)
-            {
-                case(0): { sEnemy = texts[5];break;}
-                case(1): { sEnemy = texts[6];break;}
-                case(4): { sEnemy = texts[4];break;}
-                case(5): { sEnemy = texts[7];break;}
+            switch (s) {
+                case (0): {
+                    sEnemy = texts[5];
+                    break;
+                }
+                case (1): {
+                    sEnemy = texts[6];
+                    break;
+                }
+                case (4): {
+                    sEnemy = texts[4];
+                    break;
+                }
+                case (5): {
+                    sEnemy = texts[7];
+                    break;
+                }
             }
         }
     }

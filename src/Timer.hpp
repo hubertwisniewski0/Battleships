@@ -5,8 +5,7 @@
 #ifndef BATTLESHIPS_TIMER_HPP
 #define BATTLESHIPS_TIMER_HPP
 
-class Timer
-{
+class Timer {
 private:
     pthread_t timer;
     pthread_barrier_t barrier;
@@ -14,31 +13,26 @@ private:
     bool threadOk = true;
     bool barrierOk = true;
 
-    static void* timerCallback(void* barrier)
-    {
-        pthread_barrier_t* barrier_c = (pthread_barrier_t*)barrier;
-        while(true)
-        {
+    static void *timerCallback(void *barrier) {
+        pthread_barrier_t *barrier_c = (pthread_barrier_t *) barrier;
+        while (true) {
             pthread_barrier_wait(barrier_c);
             SDL_Delay(100);
         }
     }
 
 public:
-    Timer()
-    {
+    Timer() {
         int e;
         e = pthread_barrier_init(&barrier, NULL, 2);
-        if(e != 0)
-        {
+        if (e != 0) {
             errorMessage(std::string("pthread_barrier_init: ") + std::string(strerror(e)));
             timerOk = false;
             barrierOk = false;
             return;
         }
         e = pthread_create(&timer, NULL, timerCallback, &barrier);
-        if(e != 0)
-        {
+        if (e != 0) {
             errorMessage(std::string("pthread_create: ") + std::string(strerror(e)));
             timerOk = false;
             threadOk = false;
@@ -46,21 +40,18 @@ public:
         }
     }
 
-    ~Timer()
-    {
-        if(threadOk)
+    ~Timer() {
+        if (threadOk)
             pthread_cancel(timer);
-        if(barrierOk)
+        if (barrierOk)
             pthread_barrier_destroy(&barrier);
     }
 
-    bool ok()
-    {
+    bool ok() {
         return timerOk;
     }
 
-    void synchronize()
-    {
+    void synchronize() {
         pthread_barrier_wait(&barrier);
     }
 };
