@@ -1,54 +1,59 @@
-class CZegar
+class Timer
 {
     private:
-        pthread_t zegar;
-        pthread_barrier_t bariera;
-        bool Zegar_OK = true;
-        bool watek_ok = true;
-        bool bariera_ok = true;
-        static void* zegar_c(void* bariera_v)
+        pthread_t timer;
+        pthread_barrier_t barrier;
+        bool timerOk = true;
+        bool threadOk = true;
+        bool barrierOk = true;
+
+        static void* timerCallback(void* barrier)
         {
-            pthread_barrier_t* bariera_c = (pthread_barrier_t*)bariera_v;
+            pthread_barrier_t* barrier_c = (pthread_barrier_t*)barrier;
             while(true)
             {
-                pthread_barrier_wait(bariera_c);
+                pthread_barrier_wait(barrier_c);
                 SDL_Delay(100);
             }
         }
+
     public:
-        CZegar()
+        Timer()
         {
             int e;
-            e = pthread_barrier_init(&bariera,NULL,2);
+            e = pthread_barrier_init(&barrier, NULL, 2);
             if(e != 0)
             {
                 wiadomosc_o_bledzie(std::string("pthread_barrier_init: ") + std::string(strerror(e)));
-                Zegar_OK = false;
-                bariera_ok = false;
+                timerOk = false;
+                barrierOk = false;
                 return;
             }
-            e = pthread_create(&zegar,NULL,zegar_c,&bariera);
+            e = pthread_create(&timer, NULL, timerCallback, &barrier);
             if(e != 0)
             {
                 wiadomosc_o_bledzie(std::string("pthread_create: ") + std::string(strerror(e)));
-                Zegar_OK = false;
-                watek_ok = false;
+                timerOk = false;
+                threadOk = false;
                 return;
             }
         }
-        ~CZegar()
+
+        ~Timer()
         {
-            if(watek_ok)
-                pthread_cancel(zegar);
-            if(bariera_ok)
-                pthread_barrier_destroy(&bariera);
+            if(threadOk)
+                pthread_cancel(timer);
+            if(barrierOk)
+                pthread_barrier_destroy(&barrier);
         }
+
         bool ok()
         {
-            return Zegar_OK;
+            return timerOk;
         }
-        void synchronizuj()
+
+        void synchronize()
         {
-            pthread_barrier_wait(&bariera);
+            pthread_barrier_wait(&barrier);
         }
 };

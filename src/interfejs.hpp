@@ -2,7 +2,7 @@ class GUI
 {
     private:
         Window* window = NULL;
-        CZegar* timer = NULL;
+        Timer* timer = NULL;
         SDL_Event event;
         bool quit = false;
         uint8_t victory = 0;
@@ -61,7 +61,7 @@ class GUI
                 guiOk = false;
                 return;
             }
-            timer = new CZegar;
+            timer = new Timer;
             if(!timer->ok())
             {
                 guiOk = false;
@@ -141,7 +141,7 @@ class GUI
                         }
                     }
                 }
-                timer->synchronizuj();
+                timer->synchronize();
             }
         }
 };
