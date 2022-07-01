@@ -14,7 +14,7 @@ class Window
             window = SDL_CreateWindow("Battleships", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, 0);
             if(window == NULL)
             {
-                wiadomosc_o_bledzie(std::string("SDL_CreateWindow: ") + std::string(SDL_GetError()));
+                errorMessage(std::string("SDL_CreateWindow: ") + std::string(SDL_GetError()));
                 windowOk = false;
                 return;
             }
@@ -94,8 +94,8 @@ class Window
         void victory(uint8_t w)
         {
             if(w == 1)
-                wiadomosc_o_wygranej(std::string("Player's victory"), window);
+                victoryMessage(std::string("Player's victory"), window);
             else
-                wiadomosc_o_wygranej(std::string("Enemy's victory"), window);
+                victoryMessage(std::string("Enemy's victory"), window);
         }
 };

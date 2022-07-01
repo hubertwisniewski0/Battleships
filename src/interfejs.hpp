@@ -51,7 +51,7 @@ class GUI
         {
             if(SDL_Init(SDL_INIT_VIDEO) != 0)
             {
-                wiadomosc_o_bledzie(std::string("SDL_Init: ") + std::string(SDL_GetError()));
+                errorMessage(std::string("SDL_Init: ") + std::string(SDL_GetError()));
                 guiOk = false;
                 return;
             }

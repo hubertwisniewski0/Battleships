@@ -10,7 +10,7 @@ class Board
             board = SDL_CreateRGBSurface(0, 302, 302, 24, 0, 0, 0, 0);
             if(board == NULL)
             {
-                wiadomosc_o_bledzie(std::string("SDL_CreateRGBSurface: ") + std::string(SDL_GetError()));
+                errorMessage(std::string("SDL_CreateRGBSurface: ") + std::string(SDL_GetError()));
                 boardOk = false;
                 return;
             }

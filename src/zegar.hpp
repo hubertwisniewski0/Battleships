@@ -24,7 +24,7 @@ class Timer
             e = pthread_barrier_init(&barrier, NULL, 2);
             if(e != 0)
             {
-                wiadomosc_o_bledzie(std::string("pthread_barrier_init: ") + std::string(strerror(e)));
+                errorMessage(std::string("pthread_barrier_init: ") + std::string(strerror(e)));
                 timerOk = false;
                 barrierOk = false;
                 return;
@@ -32,7 +32,7 @@ class Timer
             e = pthread_create(&timer, NULL, timerCallback, &barrier);
             if(e != 0)
             {
-                wiadomosc_o_bledzie(std::string("pthread_create: ") + std::string(strerror(e)));
+                errorMessage(std::string("pthread_create: ") + std::string(strerror(e)));
                 timerOk = false;
                 threadOk = false;
                 return;

@@ -40,7 +40,8 @@ class Texts
             {
                 if(texts[i] == NULL)
                 {
-                    wiadomosc_o_bledzie(std::string("Rendering text n") + std::to_string((int)i) + std::string(": ") + std::string(TTF_GetError()));
+                    errorMessage(std::string("Rendering text n") + std::to_string((int) i) + std::string(": ") +
+                                 std::string(TTF_GetError()));
                     textsOk = false;
                     return;
                 }
@@ -71,7 +72,8 @@ class Texts
                         numbers[j] = text->renderText(c);
                         if(numbers[j] == NULL)
                         {
-                            wiadomosc_o_bledzie(std::string("Rendering text c") + std::to_string((int)j) + std::string(": ") + std::string(TTF_GetError()));
+                            errorMessage(std::string("Rendering text c") + std::to_string((int) j) + std::string(": ") +
+                                         std::string(TTF_GetError()));
                             textsOk = false;
                             return;
                         }
@@ -82,14 +84,17 @@ class Texts
                     readings[i][j] = text->renderText(w);
                     if(readings[i][j] == NULL)
                     {
-                        wiadomosc_o_bledzie(std::string("Rendering text w") + std::to_string((int)i) + std::to_string((int)j) + std::string(": ") + std::string(TTF_GetError()));
+                        errorMessage(
+                                std::string("Rendering text w") + std::to_string((int) i) + std::to_string((int) j) +
+                                std::string(": ") + std::string(TTF_GetError()));
                         textsOk = false;
                         return;
                     }
                 }
                 if(letters[i] == NULL)
                 {
-                    wiadomosc_o_bledzie(std::string("Rendering text t") + std::to_string((int)i) + std::string(": ") + std::string(TTF_GetError()));
+                    errorMessage(std::string("Rendering text t") + std::to_string((int) i) + std::string(": ") +
+                                 std::string(TTF_GetError()));
                     textsOk = false;
                     return;
                 }

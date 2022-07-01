@@ -13,14 +13,14 @@ class Legend
             legend = SDL_CreateRGBSurface(0, 300, 180, 24, 0, 0, 0, 0);
             if(legend == NULL)
             {
-                wiadomosc_o_bledzie(std::string("SDL_CreateRGBSurface: ") + std::string(SDL_GetError()));
+                errorMessage(std::string("SDL_CreateRGBSurface: ") + std::string(SDL_GetError()));
                 legendOk = false;
                 return;
             }
             legendColors = SDL_CreateRGBSurface(0, 32, 152, 24, 0, 0, 0, 0);
             if(legendColors == NULL)
             {
-                wiadomosc_o_bledzie(std::string("SDL_CreateRGBSurface: ") + std::string(SDL_GetError()));
+                errorMessage(std::string("SDL_CreateRGBSurface: ") + std::string(SDL_GetError()));
                 legendOk = false;
                 return;
             }

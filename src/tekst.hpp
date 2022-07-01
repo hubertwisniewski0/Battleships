@@ -11,14 +11,14 @@ class Text
         {
             if(TTF_Init() != 0)
             {
-                wiadomosc_o_bledzie(std::string("TTF_Init: ") + std::string(TTF_GetError()));
+                errorMessage(std::string("TTF_Init: ") + std::string(TTF_GetError()));
                 textOk = false;
                 return;
             }
             font = TTF_OpenFont(TTF_FONT_PATH, 16);
             if(font == NULL)
             {
-                wiadomosc_o_bledzie(std::string("TTF_OpenFont: ") + std::string(TTF_GetError()));
+                errorMessage(std::string("TTF_OpenFont: ") + std::string(TTF_GetError()));
                 textOk = false;
                 return;
             }

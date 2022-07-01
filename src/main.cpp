@@ -4,16 +4,16 @@
 #include<SDL.h>
 #include<SDL_ttf.h>
 #define XOFFSET 40
-void wiadomosc_o_bledzie(std::string tresc)
+void errorMessage(std::string message)
 {
     if(SDL_WasInit(SDL_INIT_VIDEO))
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,"Błąd",tresc.c_str(),NULL);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", message.c_str(), NULL);
     else
-        std::cerr << tresc << "\n";
+        std::cerr << message << "\n";
 }
-void wiadomosc_o_wygranej(std::string tresc, SDL_Window* okno)
+void victoryMessage(std::string message, SDL_Window* window)
 {
-    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION,"Statki",tresc.c_str(),okno);
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Victory", message.c_str(), window);
 }
 #include"statki.hpp"
 #include"tekst.hpp"
@@ -26,11 +26,11 @@ void wiadomosc_o_wygranej(std::string tresc, SDL_Window* okno)
 int main(int argc, char* argv[])
 {
     srand(time(NULL));
-    Game Gra;
-    Enemy Wrog(&Gra);
-    GUI Interfejs(&Gra, &Wrog);
-    if(!Interfejs.ok())
+    Game game;
+    Enemy enemy(&game);
+    GUI gui(&game, &enemy);
+    if(!gui.ok())
         return 1;
-    Interfejs.start();
+    gui.start();
     return 0;
 }
