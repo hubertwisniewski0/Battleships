@@ -3,11 +3,11 @@ class CLegenda
     private:
         SDL_Surface* legenda = NULL;
         SDL_Surface* legenda_kolory = NULL;
-        CTekst* Tekst = NULL;
+        Text* Tekst = NULL;
         SDL_Surface* napisy[8] = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
         bool Legenda_OK = true;
     public:
-        CLegenda(CTekst* T)
+        CLegenda(Text* T)
         {
             legenda = SDL_CreateRGBSurface(0,300,180,24,0,0,0,0);
             if(legenda == NULL)
@@ -40,18 +40,18 @@ class CLegenda
                 pole.y = i*(pole.h+2)+2;
                 SDL_FillRect(legenda_kolory,&pole,kolory[i]);
             }
-            napisy[0] = Tekst->renderuj_tekst("Legenda:");
-            napisy[1] = Tekst->renderuj_tekst("Puste/nieznane pole");
-            napisy[2] = Tekst->renderuj_tekst("Statek");
-            napisy[3] = Tekst->renderuj_tekst("Pudło");
-            napisy[4] = Tekst->renderuj_tekst("Trafiony");
-            napisy[5] = Tekst->renderuj_tekst("Zatopiony");
-            napisy[6] = Tekst->renderuj_tekst("N = Nowa gra");
-            napisy[7] = Tekst->renderuj_tekst("ESC = Wyjście");
+            napisy[0] = Tekst->renderText("Legenda:");
+            napisy[1] = Tekst->renderText("Puste/nieznane pole");
+            napisy[2] = Tekst->renderText("Statek");
+            napisy[3] = Tekst->renderText("Pudło");
+            napisy[4] = Tekst->renderText("Trafiony");
+            napisy[5] = Tekst->renderText("Zatopiony");
+            napisy[6] = Tekst->renderText("N = Nowa gra");
+            napisy[7] = Tekst->renderText("ESC = Wyjście");
             for(uint8_t i = 0; i < 6; i++)
-                Tekst->rysuj_tekst(napisy[i],legenda,45,13 - napisy[i]->h/2 + 30*i);
-            Tekst->rysuj_tekst(napisy[6],legenda,300-napisy[6]->w,180-napisy[7]->h-napisy[6]->h);
-            Tekst->rysuj_tekst(napisy[7],legenda,300-napisy[7]->w,180-napisy[7]->h);
+                Tekst->drawText(napisy[i], legenda, 45, 13 - napisy[i]->h / 2 + 30 * i);
+            Tekst->drawText(napisy[6], legenda, 300 - napisy[6]->w, 180 - napisy[7]->h - napisy[6]->h);
+            Tekst->drawText(napisy[7], legenda, 300 - napisy[7]->w, 180 - napisy[7]->h);
             SDL_Rect legenda_kolory_pozycja;
             legenda_kolory_pozycja.x = 0;
             legenda_kolory_pozycja.y = 28;

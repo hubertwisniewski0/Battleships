@@ -1,64 +1,66 @@
-class CTekst
+class Text
 {
     private:
-        TTF_Font* czcionka = NULL;
-        SDL_Color kolor_tekstu;
-        SDL_Color kolor_tla;
-        bool Tekst_OK = true;
+        TTF_Font* font = NULL;
+        SDL_Color textColor;
+        SDL_Color backgroundColor;
+        bool textOk = true;
+
     public:
-        CTekst()
+        Text()
         {
             if(TTF_Init() != 0)
             {
                 wiadomosc_o_bledzie(std::string("TTF_Init: ") + std::string(TTF_GetError()));
-                Tekst_OK = false;
+                textOk = false;
                 return;
             }
-            czcionka = TTF_OpenFont(TTF_FONT_PATH,16);
-            if(czcionka == NULL)
+            font = TTF_OpenFont(TTF_FONT_PATH, 16);
+            if(font == NULL)
             {
                 wiadomosc_o_bledzie(std::string("TTF_OpenFont: ") + std::string(TTF_GetError()));
-                Tekst_OK = false;
+                textOk = false;
                 return;
             }
-            kolor_tekstu.r = 0xFF;
-            kolor_tekstu.g = 0xFF;
-            kolor_tekstu.b = 0xFF;
-            kolor_tekstu.a = 0xFF;
-            kolor_tla.r = 0x00;
-            kolor_tla.g = 0x00;
-            kolor_tla.b = 0x00;
-            kolor_tla.a = 0xFF;
+            textColor.r = 0xFF;
+            textColor.g = 0xFF;
+            textColor.b = 0xFF;
+            textColor.a = 0xFF;
+            backgroundColor.r = 0x00;
+            backgroundColor.g = 0x00;
+            backgroundColor.b = 0x00;
+            backgroundColor.a = 0xFF;
         }
-        ~CTekst()
+
+        ~Text()
         {
-            if(czcionka != NULL)
-                TTF_CloseFont(czcionka);
+            if(font != NULL)
+                TTF_CloseFont(font);
             if(TTF_WasInit() != 0)
                 TTF_Quit();
         }
+
         bool ok()
         {
-            return Tekst_OK;
+            return textOk;
         }
-        SDL_Surface* renderuj_tekst(const char* tekst)
+
+        SDL_Surface* renderText(const char* text)
         {
-            return TTF_RenderUTF8_Shaded(czcionka,tekst,kolor_tekstu,kolor_tla);
+            return TTF_RenderUTF8_Shaded(font, text, textColor, backgroundColor);
         }
-/*        SDL_Surface* renderuj_znak(uint16_t znak)
+
+        void drawText(SDL_Surface* text, SDL_Surface* target, uint16_t x, uint16_t y)
         {
-            return TTF_RenderGlyph_Solid(czcionka,znak,kolor_tekstu);
-        }*/
-        void rysuj_tekst(SDL_Surface* tekst, SDL_Surface* cel, uint16_t x, uint16_t y)
-        {
-            SDL_Rect pozycja;
-            pozycja.x = x;
-            pozycja.y = y;
-            SDL_BlitSurface(tekst,NULL,cel,&pozycja);
+            SDL_Rect position;
+            position.x = x;
+            position.y = y;
+            SDL_BlitSurface(text, NULL, target, &position);
 
         }
-        int min_odstep()
+
+        int getMinOffset()
         {
-            return TTF_FontLineSkip(czcionka);
+            return TTF_FontLineSkip(font);
         }
 };

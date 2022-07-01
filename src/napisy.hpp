@@ -19,22 +19,22 @@ class CNapisy
         SDL_Surface* wzk_wrog = NULL;
         SDL_Surface* s_gracz = NULL;
         SDL_Surface* s_wrog = NULL;
-        CTekst* Tekst = NULL;
+        Text* Tekst = NULL;
         int min_odstep;
         bool Napisy_OK = true;
     public:
-        CNapisy(CTekst* T)
+        CNapisy(Text* T)
         {
             Tekst = T;
-            min_odstep = Tekst->min_odstep();
-            napisy[0] = Tekst->renderuj_tekst("Morze gracza");
-            napisy[1] = Tekst->renderuj_tekst("Morze wroga");
-            napisy[2] = Tekst->renderuj_tekst("Gracz");
-            napisy[3] = Tekst->renderuj_tekst("Wróg");
-            napisy[4] = Tekst->renderuj_tekst("Zwycięstwo");
-            napisy[5] = Tekst->renderuj_tekst("Pudło");
-            napisy[6] = Tekst->renderuj_tekst("Trafiony");
-            napisy[7] = Tekst->renderuj_tekst("Zatopiony");
+            min_odstep = Tekst->getMinOffset();
+            napisy[0] = Tekst->renderText("Morze gracza");
+            napisy[1] = Tekst->renderText("Morze wroga");
+            napisy[2] = Tekst->renderText("Gracz");
+            napisy[3] = Tekst->renderText("Wróg");
+            napisy[4] = Tekst->renderText("Zwycięstwo");
+            napisy[5] = Tekst->renderText("Pudło");
+            napisy[6] = Tekst->renderText("Trafiony");
+            napisy[7] = Tekst->renderText("Zatopiony");
             for(uint8_t i = 0; i < 8; i++)
             {
                 if(napisy[i] == NULL)
@@ -51,7 +51,7 @@ class CNapisy
             {
                 t[0] = 0x41+i;
                 t[1] = 0;
-                litery[i] = Tekst->renderuj_tekst(t);
+                litery[i] = Tekst->renderText(t);
                 for(uint8_t j = 0; j < 10; j++)
                 {
                     if(j < 9)
@@ -67,7 +67,7 @@ class CNapisy
                     }
                     if(i == 0)
                     {
-                        liczby[j] = Tekst->renderuj_tekst(c);
+                        liczby[j] = Tekst->renderText(c);
                         if(liczby[j] == NULL)
                         {
                             wiadomosc_o_bledzie(std::string("Render tekstu c") + std::to_string((int)j) + std::string(": ") + std::string(TTF_GetError()));
@@ -78,7 +78,7 @@ class CNapisy
                     w[0] = 0;
                     strcat(w,t);
                     strcat(w,c);
-                    wzkazania[i][j] = Tekst->renderuj_tekst(w);
+                    wzkazania[i][j] = Tekst->renderText(w);
                     if(wzkazania[i][j] == NULL)
                     {
                         wiadomosc_o_bledzie(std::string("Render tekstu w") + std::to_string((int)i) + std::to_string((int)j) + std::string(": ") + std::string(TTF_GetError()));
@@ -116,18 +116,18 @@ class CNapisy
         }
         void rysuj(SDL_Surface* cel, uint8_t wygrana)
         {
-            Tekst->rysuj_tekst(napisy[0],cel,180 - napisy[0]->w/2 +XOFFSET,15 - napisy[0]->h/2);
-            Tekst->rysuj_tekst(napisy[1],cel,540 - napisy[1]->w/2 +XOFFSET,15 - napisy[1]->h/2);
-            Tekst->rysuj_tekst(napisy[2],cel,30 +XOFFSET,375 - napisy[2]->h/2);
-            Tekst->rysuj_tekst(napisy[3],cel,30 +XOFFSET,375 - napisy[3]->h/2 + min_odstep);
+            Tekst->drawText(napisy[0], cel, 180 - napisy[0]->w / 2 + XOFFSET, 15 - napisy[0]->h / 2);
+            Tekst->drawText(napisy[1], cel, 540 - napisy[1]->w / 2 + XOFFSET, 15 - napisy[1]->h / 2);
+            Tekst->drawText(napisy[2], cel, 30 + XOFFSET, 375 - napisy[2]->h / 2);
+            Tekst->drawText(napisy[3], cel, 30 + XOFFSET, 375 - napisy[3]->h / 2 + min_odstep);
             if(wzk_gracz != NULL)
-                Tekst->rysuj_tekst(wzk_gracz,cel,90 +XOFFSET,375 - wzk_gracz->h/2);
+                Tekst->drawText(wzk_gracz, cel, 90 + XOFFSET, 375 - wzk_gracz->h / 2);
             if(wzk_wrog != NULL)
-                Tekst->rysuj_tekst(wzk_wrog,cel,90 +XOFFSET,375 - wzk_wrog->h/2 + min_odstep);
+                Tekst->drawText(wzk_wrog, cel, 90 + XOFFSET, 375 - wzk_wrog->h / 2 + min_odstep);
             if(s_gracz != NULL)
-                Tekst->rysuj_tekst(s_gracz,cel,150 +XOFFSET,375 - s_gracz->h/2);
+                Tekst->drawText(s_gracz, cel, 150 + XOFFSET, 375 - s_gracz->h / 2);
             if(s_wrog != NULL)
-                Tekst->rysuj_tekst(s_wrog,cel,150 +XOFFSET,375 - s_wrog->h/2 + min_odstep);
+                Tekst->drawText(s_wrog, cel, 150 + XOFFSET, 375 - s_wrog->h / 2 + min_odstep);
 /*            Tekst->rysuj_tekst(napisy[4],cel,30 +XOFFSET,375 - napisy[4]->h/2 + 32);
             if(wygrana == 1)
                 Tekst->rysuj_tekst(napisy[2],cel,330 - napisy[2]->w +XOFFSET,375 - napisy[2]->h/2 + 32);
@@ -135,10 +135,10 @@ class CNapisy
                 Tekst->rysuj_tekst(napisy[3],cel,330 - napisy[3]->w +XOFFSET,375 - napisy[3]->h/2 + 32);*/
             for(uint8_t i = 0; i < 10; i++)
             {
-                Tekst->rysuj_tekst(litery[i],cel,45+(30*i) - litery[i]->w/2 +XOFFSET,45 - litery[i]->h/2);
-                Tekst->rysuj_tekst(litery[i],cel,405+(30*i) - litery[i]->w/2 +XOFFSET,45 - litery[i]->h/2);
-                Tekst->rysuj_tekst(liczby[i],cel,15 - liczby[i]->w/2 +XOFFSET, 75+(30*i) - liczby[i]->h/2);
-                Tekst->rysuj_tekst(liczby[i],cel,375 - liczby[i]->w/2 +XOFFSET, 75+(30*i) - liczby[i]->h/2);
+                Tekst->drawText(litery[i], cel, 45 + (30 * i) - litery[i]->w / 2 + XOFFSET, 45 - litery[i]->h / 2);
+                Tekst->drawText(litery[i], cel, 405 + (30 * i) - litery[i]->w / 2 + XOFFSET, 45 - litery[i]->h / 2);
+                Tekst->drawText(liczby[i], cel, 15 - liczby[i]->w / 2 + XOFFSET, 75 + (30 * i) - liczby[i]->h / 2);
+                Tekst->drawText(liczby[i], cel, 375 - liczby[i]->w / 2 + XOFFSET, 75 + (30 * i) - liczby[i]->h / 2);
             }
         }
         void akt_napisy(uint8_t i, uint8_t x, uint8_t y, uint8_t s, bool reset)

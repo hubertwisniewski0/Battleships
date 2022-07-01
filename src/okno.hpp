@@ -3,7 +3,7 @@ class Window
     private:
         SDL_Window* window = NULL;
         Board* board[2] = {NULL, NULL};
-        CTekst* text = NULL;
+        Text* text = NULL;
         CLegenda* legend = NULL;
         CNapisy* texts = NULL;
         bool windowOk = true;
@@ -27,7 +27,7 @@ class Window
                     return;
                 }
             }
-            text = new CTekst;
+            text = new Text;
             if(!text->ok())
             {
                 windowOk = false;
