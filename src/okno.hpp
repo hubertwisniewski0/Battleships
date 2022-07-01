@@ -5,7 +5,7 @@ class Window
         Board* board[2] = {NULL, NULL};
         Text* text = NULL;
         Legend* legend = NULL;
-        CNapisy* texts = NULL;
+        Texts* texts = NULL;
         bool windowOk = true;
 
     public:
@@ -39,7 +39,7 @@ class Window
                 windowOk = false;
                 return;
             }
-            texts = new CNapisy(text);
+            texts = new Texts(text);
             if(!texts->ok())
             {
                 windowOk = false;
@@ -72,7 +72,7 @@ class Window
             for(uint8_t i = 0; i < 2; i++)
                 board[i]->draw(SDL_GetWindowSurface(window), 29 + 360 * i + XOFFSET, 59);
             legend->draw(SDL_GetWindowSurface(window), 389 + XOFFSET, 374);
-            texts->rysuj(SDL_GetWindowSurface(window), victory);
+            texts->draw(SDL_GetWindowSurface(window));
             SDL_UpdateWindowSurface(window);
         }
 
@@ -83,12 +83,12 @@ class Window
 
         void resetTexts()
         {
-            texts->akt_napisy(0, 0, 0, 0, true);
+            texts->updateTexts(0, 0, 0, 0, true);
         }
 
         void updateTexts(uint8_t i, uint8_t x, uint8_t y, uint8_t s, bool reset)
         {
-            texts->akt_napisy(i, x, y, s, reset);
+            texts->updateTexts(i, x, y, s, reset);
         }
 
         void victory(uint8_t w)
