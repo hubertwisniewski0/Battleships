@@ -1,26 +1,35 @@
-class CGra
+class Game
 {
     private:
-        uint8_t plansze[2][10][10];
-        void zeruj_plansze()
+        uint8_t boards[2][10][10];
+
+        void clearBoards()
         {
             for(uint8_t i = 0; i < 2; i++)
                 for(uint8_t j = 0; j < 10; j++)
                     for(uint8_t k = 0; k < 10; k++)
-                        plansze[i][j][k] = 0;
+                        boards[i][j][k] = 0;
         }
-        void losuj_statki()
+
+        void generateBoards()
         {
+            // For each board
             for(uint8_t i = 0; i < 2; i++)
             {
+                // For each possible ship length
                 for(uint8_t l = 4; l > 0;l--)
                 {
+                    // For each ship
                     for(uint8_t c = 0; c < 5-l;)
                     {
-                        uint8_t start[2]; //Współrzędne początku statku
-                        uint8_t kierunek;
-                        kierunek = rand() % 2;
-                        if(kierunek == 0) //Losuj kierunek: 0 - poziomy, 1 - pionowy
+                        // Ship start coordinates
+                        uint8_t start[2];
+
+                        // Generate a random direction: 0 - horizontal, 1 - vertical
+                        uint8_t direction;
+                        direction = rand() % 2;
+
+                        if(direction == 0)
                         {
                             start[0] = rand() % (10 - (l-1));
                             start[1] = rand() % 10;
@@ -30,32 +39,37 @@ class CGra
                             start[0] = rand() % 10;
                             start[1] = rand() % (10 - (l-1));
                         }
-                        bool wolne = true;
-                        for(int8_t ckx = start[0]-1; ckx < start[0]+(kierunek == 0 ? l+1 : 2) && wolne; ckx++) //Sprawź, czy jest wystarczająco dużo wolnego miejsca, aby postawić statek (ignoruj krawędzie planszy)
+
+                        // Check if there is enough space to place a ship (ignore board boundaries)
+                        bool available = true;
+                        for(int8_t ckx = start[0]-1; ckx < start[0]+(direction == 0 ? l + 1 : 2) && available; ckx++)
                         {
-                            for(int8_t cky = start[1]-1; cky < start[1]+(kierunek == 0 ? 2 : l+1) && wolne; cky++)
+                            for(int8_t cky = start[1]-1; cky < start[1]+(direction == 0 ? 2 : l + 1) && available; cky++)
                             {
                                 if(ckx < 0 || ckx > 9 || cky < 0 || cky > 9)
                                     continue;
-                                if(plansze[i][ckx][cky] != 0)
-                                    wolne = false;
+                                if(boards[i][ckx][cky] != 0)
+                                    available = false;
                             }
                         }
-                        if(wolne)
+
+                        // If the searched space is available, place the ship and increase the placed ship count
+                        if(available)
                         {
-                            if(kierunek == 0)
-                                for(uint8_t pole = start[0]; pole < start[0]+l; pole++)
-                                    plansze[i][pole][start[1]] = 1;
+                            if(direction == 0)
+                                for(uint8_t field = start[0]; field < start[0] + l; field++)
+                                    boards[i][field][start[1]] = 1;
                             else
-                                for(uint8_t pole = start[1]; pole < start[1]+l; pole++)
-                                    plansze[i][start[0]][pole] = 1;
+                                for(uint8_t field = start[1]; field < start[1] + l; field++)
+                                    boards[i][start[0]][field] = 1;
                             c++;
                         }
                     }
                 }
             }
         }
-        bool zatopiony(uint8_t i, uint8_t x, uint8_t y, uint8_t p_x, uint8_t p_y, bool zaznacz)
+
+        bool sunk(uint8_t i, uint8_t x, uint8_t y, uint8_t p_x, uint8_t p_y, bool mark)
         {
             for(int8_t j = x-1; j < x+2; j++)
             {
@@ -63,47 +77,50 @@ class CGra
                 {
                     if(j < 0 || j > 9 || k < 0 || k > 9 || ( j == x && k == y ) || ( j == p_x && k == p_y ) )
                         continue;
-                    if(plansze[i][j][k] == 1)
+                    if(boards[i][j][k] == 1)
                         return false;
-                    else if(plansze[i][j][k] == 3)
-                        if(!zatopiony(i,j,k,x,y,zaznacz))
+                    else if(boards[i][j][k] == 3)
+                        if(!sunk(i, j, k, x, y, mark))
                             return false;
                 }
             }
-            if(zaznacz)
-                plansze[i][x][y] = 6;
+            if(mark)
+                boards[i][x][y] = 6;
             return true;
         }
+
     public:
-        void nowa_gra()
+        void newGame()
         {
-            zeruj_plansze();
-            losuj_statki();
+            clearBoards();
+            generateBoards();
         }
-        CGra()
+
+        Game()
         {
-            nowa_gra();
+            newGame();
         }
-        uint8_t strzal(uint8_t i, uint8_t x, uint8_t y)
+
+        uint8_t shot(uint8_t i, uint8_t x, uint8_t y)
         {
             if(x > 9 || y > 9)
                 return 2;
-            uint8_t poprz = plansze[i][x][y];
-            if(poprz == 0)
-                plansze[i][x][y] = 2;
-            else if(poprz == 1)
-                plansze[i][x][y] = 3;
-            bool wygrana = true;
-            for(uint8_t j = 0; j < 10 && wygrana; j++)
-                for(uint8_t k = 0; k < 10 && wygrana; k++)
-                    if(plansze[i][j][k] == 1)
-                        wygrana = false;
-            if(poprz != 1)
-                return poprz;
-            else if(zatopiony(i,x,y,x,y,false) || wygrana)
+            uint8_t prev = boards[i][x][y];
+            if(prev == 0)
+                boards[i][x][y] = 2;
+            else if(prev == 1)
+                boards[i][x][y] = 3;
+            bool victory = true;
+            for(uint8_t j = 0; j < 10 && victory; j++)
+                for(uint8_t k = 0; k < 10 && victory; k++)
+                    if(boards[i][j][k] == 1)
+                        victory = false;
+            if(prev != 1)
+                return prev;
+            else if(sunk(i, x, y, x, y, false) || victory)
             {
-                zatopiony(i,x,y,x,y,true);
-                if(wygrana)
+                sunk(i, x, y, x, y, true);
+                if(victory)
                     return 4;
                 else
                     return 5;
@@ -111,155 +128,164 @@ class CGra
             else
                 return 1;
         }
-        uint8_t pole(uint8_t i, uint8_t x, uint8_t y)
+
+        uint8_t field(uint8_t i, uint8_t x, uint8_t y)
         {
             if(x > 9 || y > 9)
                 return 2;
-            uint8_t p = plansze[i][x][y];
+            uint8_t p = boards[i][x][y];
             return p;
         }
 };
-class CWrog
+
+class Enemy
 {
     private:
-        CGra* Gra;
-        int8_t pierw_pole[2] = {0,0};
-        int8_t poprz_pole[2] = {0,0};
-        int8_t kierunek[2] = {0,0};
-        int8_t poprz_kierunek[2] = {0,0};
-        bool zainteresowany = false;
-        void zapamietaj(int8_t* pole) //Zapamiętaj ostatnie pole, kierunek ostrzału i jego efekt (wywołać po trafieniu statku)
+        Game* game;
+        int8_t first_field[2] = {0, 0};
+        int8_t prev_field[2] = {0, 0};
+        int8_t direction[2] = {0, 0};
+        int8_t prev_direction[2] = {0, 0};
+        bool interested = false;
+
+        // Memorize the last field, shooting direction and its effect (to be called after hitting a ship)
+        void memorize(int8_t* field)
         {
             for(uint8_t i = 0; i < 2; i++)
             {
-                poprz_pole[i] = pole[i];
-                poprz_kierunek[i] = kierunek[i];
-                if(!zainteresowany)
-                    pierw_pole[i] = pole[i];
+                prev_field[i] = field[i];
+                prev_direction[i] = direction[i];
+                if(!interested)
+                    first_field[i] = field[i];
             }
-            zainteresowany = true;
+            interested = true;
         }
-        void zapomnij_kierunek()
+
+        void forgetDirection()
         {
             for(uint8_t i = 0; i < 2; i++)
             {
-                kierunek[i] = 0;
+                direction[i] = 0;
             }
         }
-        void zapomnij() //Resetuj pamięć (wywołać po zatopieniu statku)
+
+        // Reset memory (to be called after sinking a ship)
+        void forget()
         {
-            zapomnij_kierunek();
+            forgetDirection();
             for(uint8_t i = 0; i < 2; i++)
             {
-                poprz_pole[i] = 0;
-                pierw_pole[i] = 0;
-                poprz_kierunek[i] = 0;
+                prev_field[i] = 0;
+                first_field[i] = 0;
+                prev_direction[i] = 0;
             }
-            zainteresowany = false;
+            interested = false;
         }
-        void odwroc() //Odwróć kierunek ostrzału oraz przywróć ostatnio ostrzeliwane pole do pierwszego (wywołać po jednoczesnym nietrafieniu i zainteresowaniu)
+
+        // Invert the shooting direction and restore the last shot field as the first one (to be called after missing when interested)
+        void invertDirection()
         {
             for(uint8_t i = 0; i < 2; i++)
             {
-                kierunek[i] = -(poprz_kierunek[i]);
-                poprz_pole[i] = pierw_pole[i];
+                direction[i] = -(prev_direction[i]);
+                prev_field[i] = first_field[i];
             }
         }
-        void ustaw_pole_rel(int8_t* pole, int8_t* kierunek_, int8_t* rel) //Ustaw pole na pozycję przesuniętą o kierunek względem pola rel
+
+        // Set the field to be offset by 'direction' from 'rel'
+        void setRelativeTo(int8_t* field, int8_t* direction, int8_t* rel)
         {
             for(uint8_t i = 0; i < 2; i++)
-                pole[i] = rel[i] + kierunek_[i];
+                field[i] = rel[i] + direction[i];
         }
-        bool sensowne_pole(int8_t* pole) //Sprawdza, czy strzał w dane pole ma sens (czy dookoła niego nie ma trafionych lub zatopionych statków)
+
+        // Check whether shooting the give field makes sense (if there is no known ships around)
+        bool sensibleField(int8_t* field)
         {
             uint8_t p;
-/*            if(zainteresowany)
-                return true;*/
-            for(int8_t i = pole[0]-1; i < pole[0]+2; i++)
+            for(int8_t i = field[0] - 1; i < field[0] + 2; i++)
             {
-                for(int8_t j = pole[1]-1; j < pole[1]+2; j++)
+                for(int8_t j = field[1] - 1; j < field[1] + 2; j++)
                 {
-                    if(zainteresowany && i == poprz_pole[0] && j == poprz_pole[1])
+                    if(interested && i == prev_field[0] && j == prev_field[1])
                         continue;
-                    p = Gra->pole(0,i,j);
+                    p = game->field(0, i, j);
                     if(p == 3 || p == 6)
                     {
-                        if(poprz_pole[0] == pierw_pole[0] && poprz_pole[1] == pierw_pole[1])
-                            zapomnij_kierunek();
+                        if(prev_field[0] == first_field[0] && prev_field[1] == first_field[1])
+                            forgetDirection();
                         else
-                            odwroc();
+                            invertDirection();
                         return false;
                     }
                 }
             }
             return true;
         }
+
     public:
-        CWrog(CGra* G)
+        Enemy(Game* game) : game(game)
+        {}
+
+        uint8_t move(uint8_t *x, uint8_t *y)
         {
-            Gra = G;
-        }
-        uint8_t graj(uint8_t *x, uint8_t *y)
-        {
-            int8_t pole[2],s;
-            uint8_t proby = 0;
-//            int tttt;
+            int8_t field[2],s;
+            uint8_t tries = 0;
             while(true)
             {
-                if(proby++ > 250)
+                if(tries++ > 250)
                 {
-                    zapomnij();
+                    forget();
                     return 7;
                 }
-//std::cout << "KR: " << (int)kierunek[0] << "\t" << (int)kierunek[1] << "\nPKR:" << (int)poprz_kierunek[0] << "\t" << (int)poprz_kierunek[1] << "\nPIP:" << (int)pierw_pole[0] << "\t" << (int)pierw_pole[1] << "\nPOP:" << (int)poprz_pole[0] << "\t" << (int)poprz_pole[1] << "\n";
-                if(!zainteresowany) //Jeśli poprzednio był trafiony, to warto sprawdzić pola dookoła
+
+                // If the last shot was hit, check the nearby fields
+                if(!interested)
                     for(uint8_t i = 0; i < 2; i++)
-                        pole[i] = rand() % 10;
-/*{
-    std::cin >> tttt;
-    pole[i] = tttt;
-}*/
+                        field[i] = rand() % 10;
                 else
                 {
-                    if(kierunek[0] == 0 && kierunek[1] == 0) //Jeśli nie ustalono kierunku ostrzału, wylosuj go
+                    // If there is no shooting direction set, generate a random one
+                    if(direction[0] == 0 && direction[1] == 0)
                     {
                         for(int8_t i = 0; i < 2; i++)
                         {
-                            kierunek[i] = rand() % 3 - 1;
-                            if(kierunek[0] != 0)
+                            direction[i] = rand() % 3 - 1;
+                            if(direction[0] != 0)
                             {
-                                kierunek[1] = 0;
+                                direction[1] = 0;
                                 break;
                             }
                         }
                     }
-                    ustaw_pole_rel(pole,kierunek,poprz_pole);
+                    setRelativeTo(field, direction, prev_field);
                 }
-//std::cout << "P:  " << (int)pole[0] << "\t" << (int)pole[1] << "\n";
-                if(sensowne_pole(pole))
-                    s = Gra->strzal(0,pole[0],pole[1]);
+
+                if(sensibleField(field))
+                    s = game->shot(0, field[0], field[1]);
                 else
                     continue;
-                *x = pole[0];
-                *y = pole[1];
-//std::cout << "S:  " << (int)s << "\n";
+
+                *x = field[0];
+                *y = field[1];
+
                 if(s == 0 || s == 2 || s == 3 || s == 6)
                 {
-                    if(zainteresowany)
-                        odwroc();
+                    if(interested)
+                        invertDirection();
                     if(s == 0)
                         break;
                 }
                 if(s == 1)
                 {
-                    zapamietaj(pole);
+                    memorize(field);
                     break;
                 }
                 if(s == 4)
                     break;
                 if(s == 5)
                 {
-                    zapomnij();
+                    forget();
                     break;
                 }
             }
@@ -267,6 +293,6 @@ class CWrog
         }
         void reset()
         {
-            zapomnij();
+            forget();
         }
 };

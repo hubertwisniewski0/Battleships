@@ -6,8 +6,8 @@ class CInterfejs
         SDL_Event zdarzenie;
         bool zakoncz = false;
         uint8_t wygrana = 0;
-        CGra* Gra;
-        CWrog* Wrog;
+        Game* Gra;
+        Enemy* Wrog;
         uint8_t x,y;
         bool Interfejs_OK = true;
         void rysuj_plansze()
@@ -19,7 +19,7 @@ class CInterfejs
                 {
                     for(uint8_t k = 0; k < 10; k++)
                     {
-                        p = Gra->pole(i,j,k);
+                        p = Gra->field(i, j, k);
                         Okno->akt_plansze(i,j,k,(p == 1 && i == 1 && wygrana == 0 ? 0 : p));
                     }
                 }
@@ -28,7 +28,7 @@ class CInterfejs
         }
         void reset()
         {
-            Gra->nowa_gra();
+            Gra->newGame();
             Wrog->reset();
             Okno->reset_napisy();
             wygrana = 0;
@@ -40,7 +40,7 @@ class CInterfejs
             Okno->wygrana(wygrana);
         }
     public:
-        CInterfejs(CGra* G, CWrog* K)
+        CInterfejs(Game* G, Enemy* K)
         {
             if(SDL_Init(SDL_INIT_VIDEO) != 0)
             {
@@ -95,7 +95,7 @@ class CInterfejs
                     {
                         x = (zdarzenie.button.x -XOFFSET)/30-13;
                         y = zdarzenie.button.y/30-2;
-                        s = Gra->strzal(1,x,y);
+                        s = Gra->shot(1, x, y);
                         if(s != 0 && s != 1 && s != 4 && s != 5)
                             continue;
                         Okno->akt_napisy(0,x,y,s,false);
@@ -103,7 +103,7 @@ class CInterfejs
                             wygrana_s(1);
                         else
                         {
-                            s = Wrog->graj(&x,&y);
+                            s = Wrog->move(&x, &y);
                             if(s == 7)
                                 continue;
                             Okno->akt_napisy(1,x,y,s,false);

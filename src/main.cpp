@@ -26,8 +26,8 @@ void wiadomosc_o_wygranej(std::string tresc, SDL_Window* okno)
 int main(int argc, char* argv[])
 {
     srand(time(NULL));
-    CGra Gra;
-    CWrog Wrog(&Gra);
+    Game Gra;
+    Enemy Wrog(&Gra);
     CInterfejs Interfejs(&Gra,&Wrog);
     if(!Interfejs.ok())
         return 1;
