@@ -1,7 +1,7 @@
 class GUI
 {
     private:
-        COkno* window = NULL;
+        Window* window = NULL;
         CZegar* timer = NULL;
         SDL_Event event;
         bool quit = false;
@@ -24,18 +24,18 @@ class GUI
                     for(uint8_t k = 0; k < 10; k++)
                     {
                         p = game->field(i, j, k);
-                        window->akt_plansze(i, j, k, (p == 1 && i == 1 && victory == 0 ? 0 : p));
+                        window->updateBoards(i, j, k, (p == 1 && i == 1 && victory == 0 ? 0 : p));
                     }
                 }
             }
-            window->rysuj(victory);
+            window->draw(victory);
         }
 
         void reset()
         {
             game->newGame();
             enemy->reset();
-            window->reset_napisy();
+            window->resetTexts();
             victory = 0;
         }
 
@@ -43,7 +43,7 @@ class GUI
         {
             victory = w;
             drawBoards();
-            window->wygrana(victory);
+            window->victory(victory);
         }
 
     public:
@@ -55,7 +55,7 @@ class GUI
                 guiOk = false;
                 return;
             }
-            window = new COkno;
+            window = new Window;
             if(!window->ok())
             {
                 guiOk = false;
@@ -85,7 +85,7 @@ class GUI
         {
             return guiOk;
         }
-        
+
         void start()
         {
             int s;
@@ -97,7 +97,7 @@ class GUI
                     if(event.type == SDL_QUIT)
                         quit = true;
                     if(event.type == SDL_MOUSEMOTION)
-                        window->rysuj(victory);
+                        window->draw(victory);
                     if(event.type == SDL_MOUSEBUTTONDOWN &&
                        event.button.x - XOFFSET >= 390 && event.button.x - XOFFSET < 690 &&
                        event.button.y >= 60 && event.button.y < 360 &&
@@ -108,7 +108,7 @@ class GUI
                         s = game->shot(1, x, y);
                         if(s != 0 && s != 1 && s != 4 && s != 5)
                             continue;
-                        window->akt_napisy(0, x, y, s, false);
+                        window->updateTexts(0, x, y, s, false);
                         if(s == 4)
                             announceVictory(1);
                         else
@@ -116,7 +116,7 @@ class GUI
                             s = enemy->move(&x, &y);
                             if(s == 7)
                                 continue;
-                            window->akt_napisy(1, x, y, s, false);
+                            window->updateTexts(1, x, y, s, false);
                             if(s == 4)
                                 announceVictory(2);
                         }

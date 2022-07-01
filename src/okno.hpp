@@ -1,94 +1,101 @@
-class COkno
+class Window
 {
     private:
-        SDL_Window* okno = NULL;
-        CPlansza* Plansza[2] = {NULL,NULL};
-        CTekst* Tekst = NULL;
-        CLegenda* Legenda = NULL;
-        CNapisy* Napisy = NULL;
-        bool Okno_OK = true;
+        SDL_Window* window = NULL;
+        CPlansza* board[2] = {NULL, NULL};
+        CTekst* text = NULL;
+        CLegenda* legend = NULL;
+        CNapisy* texts = NULL;
+        bool windowOk = true;
+
     public:
-        COkno()
+        Window()
         {
-            okno = SDL_CreateWindow("Statki",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,800,600,0);
-            if(okno == NULL)
+            window = SDL_CreateWindow("Battleships", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, 0);
+            if(window == NULL)
             {
                 wiadomosc_o_bledzie(std::string("SDL_CreateWindow: ") + std::string(SDL_GetError()));
-                Okno_OK = false;
+                windowOk = false;
                 return;
             }
             for(uint8_t i = 0; i < 2; i++)
             {
-                Plansza[i] = new CPlansza;
-                if(!Plansza[i]->ok())
+                board[i] = new CPlansza;
+                if(!board[i]->ok())
                 {
-                    Okno_OK = false;
+                    windowOk = false;
                     return;
                 }
             }
-            Tekst = new CTekst;
-            if(!Tekst->ok())
+            text = new CTekst;
+            if(!text->ok())
             {
-                Okno_OK = false;
+                windowOk = false;
                 return;
             }
-            Legenda = new CLegenda(Tekst);
-            if(!Legenda->ok())
+            legend = new CLegenda(text);
+            if(!legend->ok())
             {
-                Okno_OK = false;
+                windowOk = false;
                 return;
             }
-            Napisy = new CNapisy(Tekst);
-            if(!Napisy->ok())
+            texts = new CNapisy(text);
+            if(!texts->ok())
             {
-                Okno_OK = false;
+                windowOk = false;
                 return;
             }
         }
-        ~COkno()
+
+        ~Window()
         {
-            if(Napisy != NULL)
-                delete Napisy;
-            if(Legenda != NULL)
-                delete Legenda;
-            if(Tekst != NULL)
-                delete Tekst;
+            if(texts != NULL)
+                delete texts;
+            if(legend != NULL)
+                delete legend;
+            if(text != NULL)
+                delete text;
             for(uint8_t i = 0; i < 2; i++)
-                if(Plansza[i] != NULL)
-                    delete Plansza[i];
-            if(okno != NULL)
-                SDL_DestroyWindow(okno);
+                if(board[i] != NULL)
+                    delete board[i];
+            if(window != NULL)
+                SDL_DestroyWindow(window);
         }
         bool ok()
         {
-            return Okno_OK;
+            return windowOk;
         }
-        void rysuj(uint8_t wygrana)
+
+        void draw(uint8_t victory)
         {
-            SDL_FillRect(SDL_GetWindowSurface(okno),NULL,0);
+            SDL_FillRect(SDL_GetWindowSurface(window), NULL, 0);
             for(uint8_t i = 0; i < 2; i++)
-                Plansza[i]->rysuj(SDL_GetWindowSurface(okno),29+360*i +XOFFSET,59);
-            Legenda->rysuj(SDL_GetWindowSurface(okno),389 +XOFFSET,374);
-            Napisy->rysuj(SDL_GetWindowSurface(okno),wygrana);
-            SDL_UpdateWindowSurface(okno);
+                board[i]->rysuj(SDL_GetWindowSurface(window), 29 + 360 * i + XOFFSET, 59);
+            legend->rysuj(SDL_GetWindowSurface(window), 389 + XOFFSET, 374);
+            texts->rysuj(SDL_GetWindowSurface(window), victory);
+            SDL_UpdateWindowSurface(window);
         }
-        void akt_plansze(uint8_t i, uint8_t x, uint8_t y, uint8_t s)
+
+        void updateBoards(uint8_t i, uint8_t x, uint8_t y, uint8_t s)
         {
-            Plansza[i]->aktualizuj(x,y,s);
+            board[i]->aktualizuj(x, y, s);
         }
-        void reset_napisy()
+
+        void resetTexts()
         {
-            Napisy->akt_napisy(0,0,0,0,true);
+            texts->akt_napisy(0, 0, 0, 0, true);
         }
-        void akt_napisy(uint8_t i, uint8_t x, uint8_t y, uint8_t s, bool reset)
+
+        void updateTexts(uint8_t i, uint8_t x, uint8_t y, uint8_t s, bool reset)
         {
-            Napisy->akt_napisy(i,x,y,s,reset);
+            texts->akt_napisy(i, x, y, s, reset);
         }
-        void wygrana(uint8_t w)
+
+        void victory(uint8_t w)
         {
             if(w == 1)
-                wiadomosc_o_wygranej(std::string("Zwycięstwo gracza"),okno);
+                wiadomosc_o_wygranej(std::string("Player's victory"), window);
             else
-                wiadomosc_o_wygranej(std::string("Zwycięstwo wroga"),okno);
+                wiadomosc_o_wygranej(std::string("Enemy's victory"), window);
         }
 };
