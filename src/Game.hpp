@@ -10,14 +10,11 @@
 class Game {
 public:
     enum class FieldType {
-        Empty = 0,
-        Ship = 1,
-        Miss = 2,
-        Hit = 3,
-        Victory = 4, // TODO: to be removed
-        NoVictory = 5, // TODO: to be removed
-        Sunk = 6,
-        UnableToMove = 7 // TODO: to be removed
+        Empty,
+        Ship,
+        Miss,
+        Hit,
+        Sunk
     };
 
     enum class ShootingResult {
