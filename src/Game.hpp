@@ -34,7 +34,11 @@ private:
 
     void generateBoards();
 
-    bool sunk(uint8_t i, uint8_t x, uint8_t y, uint8_t p_x, uint8_t p_y, bool mark);
+    bool sunk(uint8_t i, uint8_t x, uint8_t y, uint8_t prevX, uint8_t prevY, bool mark);
+
+    inline bool sunk(uint8_t i, uint8_t x, uint8_t y, bool mark) {
+        return sunk(i, x, y, x, y, mark);
+    }
 
 public:
     void newGame();

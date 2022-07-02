@@ -65,20 +65,29 @@ void Game::generateBoards() {
     }
 }
 
-bool Game::sunk(uint8_t i, uint8_t x, uint8_t y, uint8_t p_x, uint8_t p_y, bool mark) {
-    for (int8_t j = x - 1; j < x + 2; j++) {
-        for (int8_t k = y - 1; k < y + 2; k++) {
-            if (j < 0 || j > 9 || k < 0 || k > 9 || (j == x && k == y) || (j == p_x && k == p_y))
+bool Game::sunk(uint8_t i, uint8_t x, uint8_t y, uint8_t prevX, uint8_t prevY, bool mark) {
+    // Check the 3x3 area around the given coordinates
+    for (uint8_t j = x - (x > 0); j <= x + 1; j++) {
+        for (uint8_t k = y - (y > 0); k <= y + 1; k++) {
+            // If these are the given coordinates or the previous ones, skip checking.
+            if ((j == x && k == y) || (j == prevX && k == prevY))
                 continue;
-            if (boards[i][j][k] == FieldType::Ship)
+
+            FieldType fieldType = field(i, j, k);
+            // If this is a 'ship' field, it means that the ship has not been sunk
+            if (fieldType == FieldType::Ship)
                 return false;
-            else if (boards[i][j][k] == FieldType::Hit)
+                // If this is a 'hit' field, keep checking
+            else if (fieldType == FieldType::Hit)
                 if (!sunk(i, j, k, x, y, mark))
                     return false;
         }
     }
+
+    // Mark the fields as sunk if requested
     if (mark)
         boards[i][x][y] = FieldType::Sunk;
+
     return true;
 }
 
@@ -106,8 +115,8 @@ Game::ShootingResult Game::shot(uint8_t i, uint8_t x, uint8_t y) {
             return ShootingResult::Miss;
         case FieldType::Ship: {
             boards[i][x][y] = FieldType::Hit;
-            if (sunk(i, x, y, x, y, false)) {
-                sunk(i, x, y, x, y, true);
+            if (sunk(i, x, y, false)) {
+                sunk(i, x, y, true);
                 return ShootingResult::Sunk;
             } else
                 return ShootingResult::Hit;
@@ -119,6 +128,6 @@ Game::ShootingResult Game::shot(uint8_t i, uint8_t x, uint8_t y) {
 
 Game::FieldType Game::field(uint8_t i, uint8_t x, uint8_t y) {
     if (x > 9 || y > 9)
-        return FieldType::Miss;
+        return FieldType::Empty;
     return boards[i][x][y];
 }
