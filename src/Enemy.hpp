@@ -7,6 +7,7 @@
 
 #include "Game.hpp"
 #include <cstdint>
+#include <tuple>
 
 class Enemy {
 private:
@@ -37,7 +38,7 @@ private:
 public:
     explicit Enemy(Game *game);
 
-    Game::FieldType move(uint8_t *x, uint8_t *y);
+    std::tuple<uint8_t, uint8_t, Game::ShootingResult> move();
 
     void reset();
 };

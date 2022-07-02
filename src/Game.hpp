@@ -14,11 +14,19 @@ public:
         Ship = 1,
         Miss = 2,
         Hit = 3,
-        Victory = 4, //TODO: to be removed
-        NoVictory = 5, //TODO: to be removed
+        Victory = 4, // TODO: to be removed
+        NoVictory = 5, // TODO: to be removed
         Sunk = 6,
-        UnableToMove = 7 //TODO: to be removed
+        UnableToMove = 7 // TODO: to be removed
     };
+
+    enum class ShootingResult {
+        Invalid,
+        Miss,
+        Hit,
+        Sunk
+    };
+
 private:
     FieldType boards[2][10][10];
 
@@ -33,9 +41,11 @@ public:
 
     Game();
 
-    FieldType shot(uint8_t i, uint8_t x, uint8_t y);
+    ShootingResult shot(uint8_t i, uint8_t x, uint8_t y);
 
     FieldType field(uint8_t i, uint8_t x, uint8_t y);
+
+    bool victory(uint8_t i);
 };
 
 #endif //BATTLESHIPS_GAME_HPP

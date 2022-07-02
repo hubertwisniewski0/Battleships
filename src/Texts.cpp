@@ -111,7 +111,7 @@ void Texts::draw(SDL_Surface *target) {
     }
 }
 
-void Texts::updateTexts(uint8_t i, uint8_t x, uint8_t y, Game::FieldType fieldType, bool reset) {
+void Texts::updateTexts(uint8_t i, uint8_t x, uint8_t y, Game::ShootingResult shootingResult, bool reset) {
     if (reset) {
         playerReading = NULL;
         enemyReading = NULL;
@@ -121,40 +121,32 @@ void Texts::updateTexts(uint8_t i, uint8_t x, uint8_t y, Game::FieldType fieldTy
     }
     if (i == 0) {
         playerReading = readings[x][y];
-        switch (fieldType) {
-            case Game::FieldType::Empty: {
+        switch (shootingResult) {
+            case Game::ShootingResult::Miss: {
                 sPlayer = texts[5];
                 break;
             }
-            case Game::FieldType::Ship: {
+            case Game::ShootingResult::Hit: {
                 sPlayer = texts[6];
                 break;
             }
-            case Game::FieldType::Victory: {
-                sPlayer = texts[4];
-                break;
-            }
-            case Game::FieldType::NoVictory: {
+            case Game::ShootingResult::Sunk: {
                 sPlayer = texts[7];
                 break;
             }
         }
     } else {
         enemyReading = readings[x][y];
-        switch (fieldType) {
-            case Game::FieldType::Empty: {
+        switch (shootingResult) {
+            case Game::ShootingResult::Miss: {
                 sEnemy = texts[5];
                 break;
             }
-            case Game::FieldType::Ship: {
+            case Game::ShootingResult::Hit: {
                 sEnemy = texts[6];
                 break;
             }
-            case Game::FieldType::Victory: {
-                sEnemy = texts[4];
-                break;
-            }
-            case Game::FieldType::NoVictory: {
+            case Game::ShootingResult::Sunk: {
                 sEnemy = texts[7];
                 break;
             }

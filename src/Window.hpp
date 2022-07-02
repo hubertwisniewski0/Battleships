@@ -32,7 +32,7 @@ public:
 
     void resetTexts();
 
-    void updateTexts(uint8_t i, uint8_t x, uint8_t y, Game::FieldType fieldType, bool reset);
+    void updateTexts(uint8_t i, uint8_t x, uint8_t y, Game::ShootingResult shootingResult, bool reset);
 
     void victory(uint8_t w);
 };

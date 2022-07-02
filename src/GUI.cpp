@@ -71,7 +71,7 @@ bool GUI::ok() {
 }
 
 void GUI::start() {
-    Game::FieldType f;
+    Game::ShootingResult shootingResult;
     drawBoards();
     while (!quit) {
         while (SDL_PollEvent(&event)) {
@@ -85,19 +85,19 @@ void GUI::start() {
                 !victory) {
                 x = (event.button.x - XOFFSET) / 30 - 13;
                 y = event.button.y / 30 - 2;
-                f = game->shot(1, x, y);
-                if (f != Game::FieldType::Empty && f != Game::FieldType::Ship && f != Game::FieldType::Victory &&
-                    f != Game::FieldType::NoVictory)
+                shootingResult = game->shot(1, x, y);
+
+                if (shootingResult == Game::ShootingResult::Invalid)
                     continue;
-                window->updateTexts(0, x, y, f, false);
-                if (f == Game::FieldType::Victory)
+
+                window->updateTexts(0, x, y, shootingResult, false);
+
+                if (game->victory(1))
                     announceVictory(1);
                 else {
-                    f = enemy->move(&x, &y);
-                    if (f == Game::FieldType::UnableToMove)
-                        continue;
-                    window->updateTexts(1, x, y, f, false);
-                    if (f == Game::FieldType::Victory)
+                    auto [enemyX, enemyY, enemyShootingResult] = enemy->move();
+                    window->updateTexts(1, enemyX, enemyY, enemyShootingResult, false);
+                    if (game->victory(0))
                         announceVictory(2);
                 }
                 drawBoards();

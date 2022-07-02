@@ -68,16 +68,11 @@ bool Enemy::sensibleField(int8_t *field) {
     return true;
 }
 
-Game::FieldType Enemy::move(uint8_t *x, uint8_t *y) {
-    Game::FieldType f;
+std::tuple<uint8_t, uint8_t, Game::ShootingResult> Enemy::move() {
+    Game::ShootingResult r;
     int8_t field[2];
-    uint8_t tries = 0;
+    uint8_t x, y;
     while (true) {
-        if (tries++ > 250) {
-            forget();
-            return Game::FieldType::UnableToMove;
-        }
-
         // If the last shot was hit, check the nearby fields
         if (!interested)
             for (uint8_t i = 0; i < 2; i++)
@@ -97,35 +92,31 @@ Game::FieldType Enemy::move(uint8_t *x, uint8_t *y) {
         }
 
         if (sensibleField(field))
-            f = game->shot(0, field[0], field[1]);
+            r = game->shot(0, field[0], field[1]);
         else
             continue;
 
-        *x = field[0];
-        *y = field[1];
+        x = field[0];
+        y = field[1];
 
-        if (f == Game::FieldType::Empty || f == Game::FieldType::Miss || f == Game::FieldType::Hit ||
-            f == Game::FieldType::Sunk) {
+        if (r == Game::ShootingResult::Miss || r == Game::ShootingResult::Invalid) {
             if (interested)
                 invertDirection();
-            if (f == Game::FieldType::Empty)
+            if (r == Game::ShootingResult::Miss)
                 break;
         }
 
-        if (f == Game::FieldType::Ship) {
+        if (r == Game::ShootingResult::Hit) {
             memorize(field);
             break;
         }
 
-        if (f == Game::FieldType::Victory)
-            break;
-
-        if (f == Game::FieldType::NoVictory) {
+        if (r == Game::ShootingResult::Sunk) {
             forget();
             break;
         }
     }
-    return f;
+    return {x, y, r};
 }
 
 void Enemy::reset() {

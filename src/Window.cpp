@@ -69,11 +69,11 @@ void Window::updateBoards(uint8_t i, uint8_t x, uint8_t y, Game::FieldType field
 }
 
 void Window::resetTexts() {
-    texts->updateTexts(0, 0, 0, Game::FieldType::Empty, true);
+    texts->updateTexts(0, 0, 0, Game::ShootingResult::Invalid, true);
 }
 
-void Window::updateTexts(uint8_t i, uint8_t x, uint8_t y, Game::FieldType fieldType, bool reset) {
-    texts->updateTexts(i, x, y, fieldType, reset);
+void Window::updateTexts(uint8_t i, uint8_t x, uint8_t y, Game::ShootingResult shootingResult, bool reset) {
+    texts->updateTexts(i, x, y, shootingResult, reset);
 }
 
 void Window::victory(uint8_t w) {

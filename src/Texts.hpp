@@ -42,7 +42,7 @@ public:
 
     void draw(SDL_Surface *target);
 
-    void updateTexts(uint8_t i, uint8_t x, uint8_t y, Game::FieldType fieldType, bool reset);
+    void updateTexts(uint8_t i, uint8_t x, uint8_t y, Game::ShootingResult shootingResult, bool reset);
 };
 
 #endif //BATTLESHIPS_TEXTS_HPP

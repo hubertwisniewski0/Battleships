@@ -5,6 +5,10 @@
 #include "Game.hpp"
 #include <cstdlib>
 
+Game::Game() {
+    newGame();
+}
+
 void Game::clearBoards() {
     for (uint8_t i = 0; i < 2; i++)
         for (uint8_t j = 0; j < 10; j++)
@@ -78,38 +82,39 @@ bool Game::sunk(uint8_t i, uint8_t x, uint8_t y, uint8_t p_x, uint8_t p_y, bool 
     return true;
 }
 
+bool Game::victory(uint8_t i) {
+    for (uint8_t j = 0; j < 10; j++)
+        for (uint8_t k = 0; k < 10; k++)
+            if (boards[i][j][k] == FieldType::Ship)
+                return false;
+    return true;
+}
+
 void Game::newGame() {
     clearBoards();
     generateBoards();
 }
 
-Game::Game() {
-    newGame();
-}
+Game::ShootingResult Game::shot(uint8_t i, uint8_t x, uint8_t y) {
+    if (x > 9 || y > 9 || boards[i][x][y] == FieldType::Miss || boards[i][x][y] == FieldType::Hit ||
+        boards[i][x][y] == FieldType::Sunk)
+        return ShootingResult::Invalid;
 
-Game::FieldType Game::shot(uint8_t i, uint8_t x, uint8_t y) {
-    if (x > 9 || y > 9)
-        return FieldType::Miss;
-    FieldType prev = boards[i][x][y];
-    if (prev == FieldType::Empty)
-        boards[i][x][y] = FieldType::Miss;
-    else if (prev == FieldType::Ship)
-        boards[i][x][y] = FieldType::Hit;
-    bool victory = true;
-    for (uint8_t j = 0; j < 10 && victory; j++)
-        for (uint8_t k = 0; k < 10 && victory; k++)
-            if (boards[i][j][k] == FieldType::Ship)
-                victory = false;
-    if (prev != FieldType::Ship)
-        return prev;
-    else if (sunk(i, x, y, x, y, false) || victory) {
-        sunk(i, x, y, x, y, true);
-        if (victory)
-            return FieldType::Victory;
-        else
-            return FieldType::NoVictory;
-    } else
-        return FieldType::Ship;
+    switch (boards[i][x][y]) {
+        case FieldType::Empty:
+            boards[i][x][y] = FieldType::Miss;
+            return ShootingResult::Miss;
+        case FieldType::Ship: {
+            boards[i][x][y] = FieldType::Hit;
+            if (sunk(i, x, y, x, y, false)) {
+                sunk(i, x, y, x, y, true);
+                return ShootingResult::Sunk;
+            } else
+                return ShootingResult::Hit;
+        }
+    }
+
+    return ShootingResult::Invalid;
 }
 
 Game::FieldType Game::field(uint8_t i, uint8_t x, uint8_t y) {
