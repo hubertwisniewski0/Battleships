@@ -8,8 +8,19 @@
 #include <cstdint>
 
 class Game {
+public:
+    enum class FieldType {
+        Empty = 0,
+        Ship = 1,
+        Miss = 2,
+        Hit = 3,
+        Victory = 4, //TODO: to be removed
+        NoVictory = 5, //TODO: to be removed
+        Sunk = 6,
+        UnableToMove = 7 //TODO: to be removed
+    };
 private:
-    uint8_t boards[2][10][10];
+    FieldType boards[2][10][10];
 
     void clearBoards();
 
@@ -22,9 +33,9 @@ public:
 
     Game();
 
-    uint8_t shot(uint8_t i, uint8_t x, uint8_t y);
+    FieldType shot(uint8_t i, uint8_t x, uint8_t y);
 
-    uint8_t field(uint8_t i, uint8_t x, uint8_t y);
+    FieldType field(uint8_t i, uint8_t x, uint8_t y);
 };
 
 #endif //BATTLESHIPS_GAME_HPP

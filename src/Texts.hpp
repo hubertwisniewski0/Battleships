@@ -7,6 +7,7 @@
 
 #include <SDL.h>
 #include "Text.hpp"
+#include "Game.hpp"
 
 class Texts {
 private:
@@ -41,7 +42,7 @@ public:
 
     void draw(SDL_Surface *target);
 
-    void updateTexts(uint8_t i, uint8_t x, uint8_t y, uint8_t s, bool reset);
+    void updateTexts(uint8_t i, uint8_t x, uint8_t y, Game::FieldType fieldType, bool reset);
 };
 
 #endif //BATTLESHIPS_TEXTS_HPP

@@ -50,13 +50,13 @@ void Enemy::setRelativeTo(int8_t *field, int8_t *direction, int8_t *rel) {
 
 // Check whether shooting the give field makes sense (if there is no known ships around)
 bool Enemy::sensibleField(int8_t *field) {
-    uint8_t p;
+    Game::FieldType f;
     for (int8_t i = field[0] - 1; i < field[0] + 2; i++) {
         for (int8_t j = field[1] - 1; j < field[1] + 2; j++) {
             if (interested && i == prev_field[0] && j == prev_field[1])
                 continue;
-            p = game->field(0, i, j);
-            if (p == 3 || p == 6) {
+            f = game->field(0, i, j);
+            if (f == Game::FieldType::Hit || f == Game::FieldType::Sunk) {
                 if (prev_field[0] == first_field[0] && prev_field[1] == first_field[1])
                     forgetDirection();
                 else
@@ -68,13 +68,14 @@ bool Enemy::sensibleField(int8_t *field) {
     return true;
 }
 
-uint8_t Enemy::move(uint8_t *x, uint8_t *y) {
-    int8_t field[2], s;
+Game::FieldType Enemy::move(uint8_t *x, uint8_t *y) {
+    Game::FieldType f;
+    int8_t field[2];
     uint8_t tries = 0;
     while (true) {
         if (tries++ > 250) {
             forget();
-            return 7;
+            return Game::FieldType::UnableToMove;
         }
 
         // If the last shot was hit, check the nearby fields
@@ -96,31 +97,35 @@ uint8_t Enemy::move(uint8_t *x, uint8_t *y) {
         }
 
         if (sensibleField(field))
-            s = game->shot(0, field[0], field[1]);
+            f = game->shot(0, field[0], field[1]);
         else
             continue;
 
         *x = field[0];
         *y = field[1];
 
-        if (s == 0 || s == 2 || s == 3 || s == 6) {
+        if (f == Game::FieldType::Empty || f == Game::FieldType::Miss || f == Game::FieldType::Hit ||
+            f == Game::FieldType::Sunk) {
             if (interested)
                 invertDirection();
-            if (s == 0)
+            if (f == Game::FieldType::Empty)
                 break;
         }
-        if (s == 1) {
+
+        if (f == Game::FieldType::Ship) {
             memorize(field);
             break;
         }
-        if (s == 4)
+
+        if (f == Game::FieldType::Victory)
             break;
-        if (s == 5) {
+
+        if (f == Game::FieldType::NoVictory) {
             forget();
             break;
         }
     }
-    return s;
+    return f;
 }
 
 void Enemy::reset() {

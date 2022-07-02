@@ -9,7 +9,7 @@ void Game::clearBoards() {
     for (uint8_t i = 0; i < 2; i++)
         for (uint8_t j = 0; j < 10; j++)
             for (uint8_t k = 0; k < 10; k++)
-                boards[i][j][k] = 0;
+                boards[i][j][k] = FieldType::Empty;
 }
 
 void Game::generateBoards() {
@@ -41,7 +41,7 @@ void Game::generateBoards() {
                          cky < start[1] + (direction == 0 ? 2 : l + 1) && available; cky++) {
                         if (ckx < 0 || ckx > 9 || cky < 0 || cky > 9)
                             continue;
-                        if (boards[i][ckx][cky] != 0)
+                        if (boards[i][ckx][cky] != FieldType::Empty)
                             available = false;
                     }
                 }
@@ -50,10 +50,10 @@ void Game::generateBoards() {
                 if (available) {
                     if (direction == 0)
                         for (uint8_t field = start[0]; field < start[0] + l; field++)
-                            boards[i][field][start[1]] = 1;
+                            boards[i][field][start[1]] = FieldType::Ship;
                     else
                         for (uint8_t field = start[1]; field < start[1] + l; field++)
-                            boards[i][start[0]][field] = 1;
+                            boards[i][start[0]][field] = FieldType::Ship;
                     c++;
                 }
             }
@@ -66,15 +66,15 @@ bool Game::sunk(uint8_t i, uint8_t x, uint8_t y, uint8_t p_x, uint8_t p_y, bool 
         for (int8_t k = y - 1; k < y + 2; k++) {
             if (j < 0 || j > 9 || k < 0 || k > 9 || (j == x && k == y) || (j == p_x && k == p_y))
                 continue;
-            if (boards[i][j][k] == 1)
+            if (boards[i][j][k] == FieldType::Ship)
                 return false;
-            else if (boards[i][j][k] == 3)
+            else if (boards[i][j][k] == FieldType::Hit)
                 if (!sunk(i, j, k, x, y, mark))
                     return false;
         }
     }
     if (mark)
-        boards[i][x][y] = 6;
+        boards[i][x][y] = FieldType::Sunk;
     return true;
 }
 
@@ -87,34 +87,33 @@ Game::Game() {
     newGame();
 }
 
-uint8_t Game::shot(uint8_t i, uint8_t x, uint8_t y) {
+Game::FieldType Game::shot(uint8_t i, uint8_t x, uint8_t y) {
     if (x > 9 || y > 9)
-        return 2;
-    uint8_t prev = boards[i][x][y];
-    if (prev == 0)
-        boards[i][x][y] = 2;
-    else if (prev == 1)
-        boards[i][x][y] = 3;
+        return FieldType::Miss;
+    FieldType prev = boards[i][x][y];
+    if (prev == FieldType::Empty)
+        boards[i][x][y] = FieldType::Miss;
+    else if (prev == FieldType::Ship)
+        boards[i][x][y] = FieldType::Hit;
     bool victory = true;
     for (uint8_t j = 0; j < 10 && victory; j++)
         for (uint8_t k = 0; k < 10 && victory; k++)
-            if (boards[i][j][k] == 1)
+            if (boards[i][j][k] == FieldType::Ship)
                 victory = false;
-    if (prev != 1)
+    if (prev != FieldType::Ship)
         return prev;
     else if (sunk(i, x, y, x, y, false) || victory) {
         sunk(i, x, y, x, y, true);
         if (victory)
-            return 4;
+            return FieldType::Victory;
         else
-            return 5;
+            return FieldType::NoVictory;
     } else
-        return 1;
+        return FieldType::Ship;
 }
 
-uint8_t Game::field(uint8_t i, uint8_t x, uint8_t y) {
+Game::FieldType Game::field(uint8_t i, uint8_t x, uint8_t y) {
     if (x > 9 || y > 9)
-        return 2;
-    uint8_t p = boards[i][x][y];
-    return p;
+        return FieldType::Miss;
+    return boards[i][x][y];
 }

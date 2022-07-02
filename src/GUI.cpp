@@ -36,15 +36,17 @@ GUI::~GUI() {
 }
 
 void GUI::drawBoards() {
-    int p;
+    Game::FieldType f;
     // For each board
     for (uint8_t i = 0; i < 2; i++) {
         // For each column
         for (uint8_t j = 0; j < 10; j++) {
             // For each row
             for (uint8_t k = 0; k < 10; k++) {
-                p = game->field(i, j, k);
-                window->updateBoards(i, j, k, (p == 1 && i == 1 && victory == 0 ? 0 : p));
+                f = game->field(i, j, k);
+                window->updateBoards(i, j, k,
+                                     (f == Game::FieldType::Ship && i == 1 && victory == 0 ? Game::FieldType::Empty
+                                                                                           : f));
             }
         }
     }
@@ -69,7 +71,7 @@ bool GUI::ok() {
 }
 
 void GUI::start() {
-    int s;
+    Game::FieldType f;
     drawBoards();
     while (!quit) {
         while (SDL_PollEvent(&event)) {
@@ -83,18 +85,19 @@ void GUI::start() {
                 !victory) {
                 x = (event.button.x - XOFFSET) / 30 - 13;
                 y = event.button.y / 30 - 2;
-                s = game->shot(1, x, y);
-                if (s != 0 && s != 1 && s != 4 && s != 5)
+                f = game->shot(1, x, y);
+                if (f != Game::FieldType::Empty && f != Game::FieldType::Ship && f != Game::FieldType::Victory &&
+                    f != Game::FieldType::NoVictory)
                     continue;
-                window->updateTexts(0, x, y, s, false);
-                if (s == 4)
+                window->updateTexts(0, x, y, f, false);
+                if (f == Game::FieldType::Victory)
                     announceVictory(1);
                 else {
-                    s = enemy->move(&x, &y);
-                    if (s == 7)
+                    f = enemy->move(&x, &y);
+                    if (f == Game::FieldType::UnableToMove)
                         continue;
-                    window->updateTexts(1, x, y, s, false);
-                    if (s == 4)
+                    window->updateTexts(1, x, y, f, false);
+                    if (f == Game::FieldType::Victory)
                         announceVictory(2);
                 }
                 drawBoards();

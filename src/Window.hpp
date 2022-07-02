@@ -8,6 +8,7 @@
 #include "Board.hpp"
 #include "Texts.hpp"
 #include "Legend.hpp"
+#include "Game.hpp"
 
 class Window {
 private:
@@ -27,11 +28,11 @@ public:
 
     void draw(uint8_t victory);
 
-    void updateBoards(uint8_t i, uint8_t x, uint8_t y, uint8_t s);
+    void updateBoards(uint8_t i, uint8_t x, uint8_t y, Game::FieldType fieldType);
 
     void resetTexts();
 
-    void updateTexts(uint8_t i, uint8_t x, uint8_t y, uint8_t s, bool reset);
+    void updateTexts(uint8_t i, uint8_t x, uint8_t y, Game::FieldType fieldType, bool reset);
 
     void victory(uint8_t w);
 };

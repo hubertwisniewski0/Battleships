@@ -26,30 +26,30 @@ bool Board::ok() {
     return boardOk;
 }
 
-void Board::update(uint8_t x, uint8_t y, uint8_t s) {
+void Board::update(uint8_t x, uint8_t y, Game::FieldType fieldType) {
     if (x > 9 || y > 9)
         return;
     field.x = x * (field.w + 2) + 2;
     field.y = y * (field.h + 2) + 2;
     uint32_t color;
-    switch (s) {
-        case (0): {
+    switch (fieldType) {
+        case Game::FieldType::Empty: {
             color = 0x0000FF;
             break;
         }
-        case (1): {
+        case Game::FieldType::Ship: {
             color = 0x00FF00;
             break;
         }
-        case (2): {
+        case Game::FieldType::Miss: {
             color = 0x7F7F7F;
             break;
         }
-        case (3): {
+        case Game::FieldType::Hit: {
             color = 0xFFFF00;
             break;
         }
-        case (6): {
+        case Game::FieldType::Sunk: {
             color = 0xFF0000;
             break;
         }

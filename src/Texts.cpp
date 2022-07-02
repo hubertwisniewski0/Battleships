@@ -111,7 +111,7 @@ void Texts::draw(SDL_Surface *target) {
     }
 }
 
-void Texts::updateTexts(uint8_t i, uint8_t x, uint8_t y, uint8_t s, bool reset) {
+void Texts::updateTexts(uint8_t i, uint8_t x, uint8_t y, Game::FieldType fieldType, bool reset) {
     if (reset) {
         playerReading = NULL;
         enemyReading = NULL;
@@ -121,40 +121,40 @@ void Texts::updateTexts(uint8_t i, uint8_t x, uint8_t y, uint8_t s, bool reset) 
     }
     if (i == 0) {
         playerReading = readings[x][y];
-        switch (s) {
-            case (0): {
+        switch (fieldType) {
+            case Game::FieldType::Empty: {
                 sPlayer = texts[5];
                 break;
             }
-            case (1): {
+            case Game::FieldType::Ship: {
                 sPlayer = texts[6];
                 break;
             }
-            case (4): {
+            case Game::FieldType::Victory: {
                 sPlayer = texts[4];
                 break;
             }
-            case (5): {
+            case Game::FieldType::NoVictory: {
                 sPlayer = texts[7];
                 break;
             }
         }
     } else {
         enemyReading = readings[x][y];
-        switch (s) {
-            case (0): {
+        switch (fieldType) {
+            case Game::FieldType::Empty: {
                 sEnemy = texts[5];
                 break;
             }
-            case (1): {
+            case Game::FieldType::Ship: {
                 sEnemy = texts[6];
                 break;
             }
-            case (4): {
+            case Game::FieldType::Victory: {
                 sEnemy = texts[4];
                 break;
             }
-            case (5): {
+            case Game::FieldType::NoVictory: {
                 sEnemy = texts[7];
                 break;
             }

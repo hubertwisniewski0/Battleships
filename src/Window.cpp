@@ -64,16 +64,16 @@ void Window::draw(uint8_t victory) {
     SDL_UpdateWindowSurface(window);
 }
 
-void Window::updateBoards(uint8_t i, uint8_t x, uint8_t y, uint8_t s) {
-    board[i]->update(x, y, s);
+void Window::updateBoards(uint8_t i, uint8_t x, uint8_t y, Game::FieldType fieldType) {
+    board[i]->update(x, y, fieldType);
 }
 
 void Window::resetTexts() {
-    texts->updateTexts(0, 0, 0, 0, true);
+    texts->updateTexts(0, 0, 0, Game::FieldType::Empty, true);
 }
 
-void Window::updateTexts(uint8_t i, uint8_t x, uint8_t y, uint8_t s, bool reset) {
-    texts->updateTexts(i, x, y, s, reset);
+void Window::updateTexts(uint8_t i, uint8_t x, uint8_t y, Game::FieldType fieldType, bool reset) {
+    texts->updateTexts(i, x, y, fieldType, reset);
 }
 
 void Window::victory(uint8_t w) {

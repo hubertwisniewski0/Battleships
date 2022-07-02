@@ -37,7 +37,7 @@ private:
 public:
     explicit Enemy(Game *game);
 
-    uint8_t move(uint8_t *x, uint8_t *y);
+    Game::FieldType move(uint8_t *x, uint8_t *y);
 
     void reset();
 };
