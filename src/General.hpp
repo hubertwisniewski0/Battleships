@@ -6,5 +6,6 @@
 #define BATTLESHIPS_GENERAL_HPP
 
 #define XOFFSET 40
+constexpr uint8_t boardSize = 10;
 
 #endif //BATTLESHIPS_GENERAL_HPP

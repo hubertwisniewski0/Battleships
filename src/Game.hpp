@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <unordered_map>
 #include <random>
+#include "General.hpp"
 
 class Game {
 public:
@@ -37,7 +38,7 @@ public:
     };
 
 private:
-    std::unordered_map<BoardOwner, std::array<std::array<FieldType, 10>, 10>> boards;
+    std::unordered_map<BoardOwner, std::array<std::array<FieldType, boardSize>, boardSize>> boards;
     std::random_device rd;
     std::minstd_rand rng;
 

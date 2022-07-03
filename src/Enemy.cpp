@@ -52,13 +52,13 @@ bool Enemy::sensibleField(Game::Position position) {
 }
 
 std::tuple<Game::Position, Game::ShootingResult> Enemy::move() {
-    Game::Position position;
+    Game::Position position{};
     Game::ShootingResult shootingResult;
     while (true) {
         // If not interested, choose random coordinates and shoot
         if (!interested) {
-            position.x = rng() % 10;
-            position.y = rng() % 10;
+            position.x = rng() % boardSize;
+            position.y = rng() % boardSize;
 
             if (sensibleField(position)) {
                 shootingResult = game->shot(Game::BoardOwner::Player, position);

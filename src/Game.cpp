@@ -22,7 +22,8 @@ void Game::generateBoards() {
         for (uint8_t l = 4; l > 0; l--)
             // For each ship (count)
             for (uint8_t c = 0; c < 5 - l;)
-                if (tryPlaceShip(boardOwner, {static_cast<uint8_t>(rng() % 10), static_cast<uint8_t>(rng() % 10)},
+                if (tryPlaceShip(boardOwner,
+                                 {static_cast<uint8_t>(rng() % boardSize), static_cast<uint8_t>(rng() % boardSize)},
                                  rng() % 2, l))
                     c++;
 }
@@ -59,7 +60,7 @@ bool Game::tryPlaceShip(BoardOwner boardOwner, Position position, bool vertical,
          j <= position.x + (vertical ? 1 : length); j++) {
         for (uint8_t k = position.y - (position.y > 0);
              k <= position.y + (vertical ? length : 1); k++) {
-            if (j > 10 || k > 10 || getField(boardOwner, {j, k}) != FieldType::Empty)
+            if (j > boardSize || k > boardSize || getField(boardOwner, {j, k}) != FieldType::Empty)
                 return false;
         }
     }
@@ -76,8 +77,8 @@ bool Game::tryPlaceShip(BoardOwner boardOwner, Position position, bool vertical,
 }
 
 bool Game::victory(BoardOwner boardOwner) {
-    for (uint8_t j = 0; j < 10; j++)
-        for (uint8_t k = 0; k < 10; k++)
+    for (uint8_t j = 0; j < boardSize; j++)
+        for (uint8_t k = 0; k < boardSize; k++)
             if (getField(boardOwner, {j, k}) == FieldType::Ship)
                 return false;
     return true;
@@ -89,7 +90,7 @@ void Game::newGame() {
 }
 
 Game::ShootingResult Game::shot(BoardOwner boardOwner, Position position) {
-    if (position.x > 9 || position.y > 9 || getField(boardOwner, position) == FieldType::Miss ||
+    if (position.x > boardSize - 1 || position.y > boardSize - 1 || getField(boardOwner, position) == FieldType::Miss ||
         getField(boardOwner, position) == FieldType::Hit ||
         getField(boardOwner, position) == FieldType::Sunk)
         return ShootingResult::Invalid;
@@ -112,7 +113,7 @@ Game::ShootingResult Game::shot(BoardOwner boardOwner, Position position) {
 }
 
 Game::FieldType Game::getField(BoardOwner boardOwner, Position position) {
-    if (position.x > 9 || position.y > 9)
+    if (position.x > boardSize - 1 || position.y > boardSize - 1)
         return FieldType::Empty;
     return boards[boardOwner][position.x][position.y];
 }
@@ -125,5 +126,5 @@ Game::FieldType Game::getFieldObscured(BoardOwner boardOwner, Position position)
 }
 
 bool Game::positionWithinLimits(Position position) {
-    return (position.x < 10 && position.y < 10);
+    return (position.x < boardSize && position.y < boardSize);
 }
