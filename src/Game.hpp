@@ -30,6 +30,11 @@ public:
         Enemy
     };
 
+    struct Position {
+        uint8_t x;
+        uint8_t y;
+    };
+
 private:
     std::unordered_map<BoardOwner, std::array<std::array<FieldType, 10>, 10>> boards;
 
@@ -37,10 +42,10 @@ private:
 
     void generateBoards();
 
-    bool sunk(BoardOwner boardOwner, uint8_t x, uint8_t y, uint8_t prevX, uint8_t prevY, bool mark);
+    bool sunk(BoardOwner boardOwner, Position position, Position prevPosition, bool mark);
 
-    inline bool sunk(BoardOwner boardOwner, uint8_t x, uint8_t y, bool mark) {
-        return sunk(boardOwner, x, y, x, y, mark);
+    inline bool sunk(BoardOwner boardOwner, Position position, bool mark) {
+        return sunk(boardOwner, position, position, mark);
     }
 
 public:
@@ -48,9 +53,9 @@ public:
 
     Game();
 
-    ShootingResult shot(BoardOwner boardOwner, uint8_t x, uint8_t y);
+    ShootingResult shot(BoardOwner boardOwner, Position position);
 
-    FieldType field(BoardOwner boardOwner, uint8_t x, uint8_t y);
+    FieldType field(BoardOwner boardOwner, Position position);
 
     bool victory(BoardOwner boardOwner);
 };

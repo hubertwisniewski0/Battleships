@@ -7,57 +7,68 @@
 
 Enemy::Enemy(Game *game) : game(game) {}
 
-void Enemy::memorize(int8_t *field) {
-    for (uint8_t i = 0; i < 2; i++) {
-        prev_field[i] = field[i];
-        prev_direction[i] = direction[i];
-        if (!interested)
-            first_field[i] = field[i];
-    }
+void Enemy::memorize(Game::Position position) {
+    prevField = position;
+    prevDirection = direction;
+    if (!interested)
+        firstField = position;
     interested = true;
 }
 
 void Enemy::forgetDirection() {
-    for (uint8_t i = 0; i < 2; i++) {
-        direction[i] = 0;
-    }
+    direction = ShootingDirection::None;
 }
 
 // Reset memory (to be called after sinking a ship)
 void Enemy::forget() {
     forgetDirection();
-    for (uint8_t i = 0; i < 2; i++) {
-        prev_field[i] = 0;
-        first_field[i] = 0;
-        prev_direction[i] = 0;
-    }
+    prevField = {0, 0};
+    firstField = {0, 0};
+    prevDirection = ShootingDirection::None;
     interested = false;
 }
 
 // Invert the shooting direction and restore the last shot field as the first one (to be called after missing when interested)
 void Enemy::invertDirection() {
-    for (uint8_t i = 0; i < 2; i++) {
-        direction[i] = -(prev_direction[i]);
-        prev_field[i] = first_field[i];
-    }
+    if (direction != ShootingDirection::None)
+        direction = static_cast<ShootingDirection>((~static_cast<unsigned>(prevDirection)) & 0x3);
+    prevField = firstField;
 }
 
 // Set the field to be offset by 'direction' from 'rel'
-void Enemy::setRelativeTo(int8_t *field, int8_t *direction, int8_t *rel) {
-    for (uint8_t i = 0; i < 2; i++)
-        field[i] = rel[i] + direction[i];
+Game::Position Enemy::getRelativeTo(ShootingDirection shootingDirection, Game::Position rel) {
+    Game::Position newPosition = rel;
+    switch (shootingDirection) {
+        case ShootingDirection::Left: {
+            newPosition.x -= (rel.x > 0);
+            break;
+        }
+        case ShootingDirection::Right: {
+            newPosition.x += (rel.x < 9);
+            break;
+        }
+        case ShootingDirection::Up: {
+            newPosition.y -= (rel.y > 0);
+            break;
+        }
+        case ShootingDirection::Down: {
+            newPosition.y += (rel.y < 9);
+            break;
+        }
+    }
+    return newPosition;
 }
 
 // Check whether shooting the give field makes sense (if there is no known ships around)
-bool Enemy::sensibleField(int8_t *field) {
+bool Enemy::sensibleField(Game::Position position) {
     Game::FieldType f;
-    for (int8_t i = field[0] - 1; i < field[0] + 2; i++) {
-        for (int8_t j = field[1] - 1; j < field[1] + 2; j++) {
-            if (interested && i == prev_field[0] && j == prev_field[1])
+    for (uint8_t i = position.x - (position.x > 0); i <= position.x + 1; i++) {
+        for (uint8_t j = position.y - (position.y > 0); j <= position.y + 1; j++) {
+            if (interested && i == prevField.x && j == prevField.y)
                 continue;
-            f = game->field(Game::BoardOwner::Player, i, j);
+            f = game->field(Game::BoardOwner::Player, {i, j});
             if (f == Game::FieldType::Hit || f == Game::FieldType::Sunk) {
-                if (prev_field[0] == first_field[0] && prev_field[1] == first_field[1])
+                if (prevField.x == firstField.x && prevField.y == firstField.y)
                     forgetDirection();
                 else
                     invertDirection();
@@ -70,34 +81,24 @@ bool Enemy::sensibleField(int8_t *field) {
 
 std::tuple<uint8_t, uint8_t, Game::ShootingResult> Enemy::move() {
     Game::ShootingResult r;
-    int8_t field[2];
-    uint8_t x, y;
+    Game::Position position;
     while (true) {
         // If the last shot was hit, check the nearby fields
-        if (!interested)
-            for (uint8_t i = 0; i < 2; i++)
-                field[i] = rand() % 10;
-        else {
+        if (!interested) {
+            position.x = rand() % 10;
+            position.y = rand() % 10;
+        } else {
             // If there is no shooting direction set, generate a random one
-            if (direction[0] == 0 && direction[1] == 0) {
-                for (int8_t i = 0; i < 2; i++) {
-                    direction[i] = rand() % 3 - 1;
-                    if (direction[0] != 0) {
-                        direction[1] = 0;
-                        break;
-                    }
-                }
-            }
-            setRelativeTo(field, direction, prev_field);
+            if (direction == ShootingDirection::None)
+                direction = static_cast<ShootingDirection>(rand() % 4);
+
+            position = getRelativeTo(direction, prevField);
         }
 
-        if (sensibleField(field))
-            r = game->shot(Game::BoardOwner::Player, field[0], field[1]);
+        if (sensibleField(position))
+            r = game->shot(Game::BoardOwner::Player, position);
         else
             continue;
-
-        x = field[0];
-        y = field[1];
 
         if (r == Game::ShootingResult::Miss || r == Game::ShootingResult::Invalid) {
             if (interested)
@@ -107,7 +108,7 @@ std::tuple<uint8_t, uint8_t, Game::ShootingResult> Enemy::move() {
         }
 
         if (r == Game::ShootingResult::Hit) {
-            memorize(field);
+            memorize(position);
             break;
         }
 
@@ -116,7 +117,7 @@ std::tuple<uint8_t, uint8_t, Game::ShootingResult> Enemy::move() {
             break;
         }
     }
-    return {x, y, r};
+    return {position.x, position.y, r};
 }
 
 void Enemy::reset() {
