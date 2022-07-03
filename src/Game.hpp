@@ -48,6 +48,10 @@ private:
         return sunk(boardOwner, position, position, mark);
     }
 
+    inline void setField(BoardOwner boardOwner, Position position, FieldType fieldType) {
+        boards[boardOwner][position.x][position.y] = fieldType;
+    }
+
 public:
     void newGame();
 
@@ -55,7 +59,7 @@ public:
 
     ShootingResult shot(BoardOwner boardOwner, Position position);
 
-    FieldType field(BoardOwner boardOwner, Position position);
+    FieldType getField(BoardOwner boardOwner, Position position);
 
     bool victory(BoardOwner boardOwner);
 };

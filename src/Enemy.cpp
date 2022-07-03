@@ -66,7 +66,7 @@ bool Enemy::sensibleField(Game::Position position) {
         for (uint8_t j = position.y - (position.y > 0); j <= position.y + 1; j++) {
             if (interested && i == prevField.x && j == prevField.y)
                 continue;
-            f = game->field(Game::BoardOwner::Player, {i, j});
+            f = game->getField(Game::BoardOwner::Player, {i, j});
             if (f == Game::FieldType::Hit || f == Game::FieldType::Sunk) {
                 if (prevField.x == firstField.x && prevField.y == firstField.y)
                     forgetDirection();

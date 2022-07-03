@@ -43,7 +43,7 @@ void GUI::drawBoards() {
         for (uint8_t j = 0; j < 10; j++) {
             // For each row
             for (uint8_t k = 0; k < 10; k++) {
-                f = game->field(boardOwner, {j, k});
+                f = game->getField(boardOwner, {j, k});
                 window->updateBoards(boardOwner, j, k,
                                      (f == Game::FieldType::Ship && boardOwner == Game::BoardOwner::Enemy &&
                                       victory == 0 ? Game::FieldType::Empty
