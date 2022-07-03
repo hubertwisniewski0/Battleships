@@ -3,9 +3,8 @@
 //
 
 #include "Game.hpp"
-#include <cstdlib>
 
-Game::Game() {
+Game::Game() : rng(rd()) {
     newGame();
 }
 
@@ -23,8 +22,8 @@ void Game::generateBoards() {
         for (uint8_t l = 4; l > 0; l--)
             // For each ship (count)
             for (uint8_t c = 0; c < 5 - l;)
-                if (tryPlaceShip(boardOwner, {static_cast<uint8_t>(rand() % 10), static_cast<uint8_t>(rand() % 10)},
-                                 rand() % 2, l))
+                if (tryPlaceShip(boardOwner, {static_cast<uint8_t>(rng() % 10), static_cast<uint8_t>(rng() % 10)},
+                                 rng() % 2, l))
                     c++;
 }
 

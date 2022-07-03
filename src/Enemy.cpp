@@ -3,15 +3,12 @@
 //
 
 #include "Enemy.hpp"
-#include <cstdlib>
 
-Enemy::Enemy(Game *game) : game(game) {}
+Enemy::Enemy(Game *game) : game(game), rng(rd()) {}
 
 // Invert the shooting direction and restore the last shot field as the first one (to be called after missing when interested)
 Enemy::ShootingDirection Enemy::getInverseDirection(Enemy::ShootingDirection shootingDirection) {
-    if (shootingDirection != ShootingDirection::None)
-        return static_cast<ShootingDirection>((~static_cast<unsigned>(shootingDirection)) & 0x3);
-    return ShootingDirection::None;
+    return static_cast<ShootingDirection>((~static_cast<unsigned>(shootingDirection)) & 0x3);
 }
 
 // Set the field to be offset by 'direction' from 'rel'
@@ -60,8 +57,8 @@ std::tuple<Game::Position, Game::ShootingResult> Enemy::move() {
     while (true) {
         // If not interested, choose random coordinates and shoot
         if (!interested) {
-            position.x = rand() % 10;
-            position.y = rand() % 10;
+            position.x = rng() % 10;
+            position.y = rng() % 10;
 
             if (sensibleField(position)) {
                 shootingResult = game->shot(Game::BoardOwner::Player, position);
@@ -79,7 +76,7 @@ std::tuple<Game::Position, Game::ShootingResult> Enemy::move() {
             // If there is no shooting direction determined (interested and hit once)
             if (lastShootingDirection == ShootingDirection::None) {
                 // Choose a random direction and shoot the last hit position's neighbour
-                auto shootingDirection = static_cast<ShootingDirection>(rand() % 4);
+                auto shootingDirection = static_cast<ShootingDirection>(rng() % 4);
                 position = getRelativeTo(shootingDirection, lastHitPosition);
                 if (Game::positionWithinLimits(position))
                     shootingResult = game->shot(Game::BoardOwner::Player, position);

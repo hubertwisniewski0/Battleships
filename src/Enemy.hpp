@@ -26,11 +26,14 @@ private:
     Game::Position lastHitPosition;
     ShootingDirection lastShootingDirection = ShootingDirection::None;
 
+    std::random_device rd;
+    std::minstd_rand rng;
+
     // Invert the shooting direction and restore the last shot field as the first one (to be called after missing when interested)
-    ShootingDirection getInverseDirection(Enemy::ShootingDirection shootingDirection);
+    static ShootingDirection getInverseDirection(Enemy::ShootingDirection shootingDirection);
 
     // Get the field offset by 'shootingDirection' from 'rel'
-    Game::Position getRelativeTo(ShootingDirection shootingDirection, Game::Position rel);
+    static Game::Position getRelativeTo(ShootingDirection shootingDirection, Game::Position rel);
 
     // Check whether shooting the give field makes sense (if there is no known ships around)
     bool sensibleField(Game::Position position);
