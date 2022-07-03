@@ -7,32 +7,11 @@
 
 Enemy::Enemy(Game *game) : game(game) {}
 
-void Enemy::memorize(Game::Position position) {
-    prevField = position;
-    prevDirection = direction;
-    if (!interested)
-        firstField = position;
-    interested = true;
-}
-
-void Enemy::forgetDirection() {
-    direction = ShootingDirection::None;
-}
-
-// Reset memory (to be called after sinking a ship)
-void Enemy::forget() {
-    forgetDirection();
-    prevField = {0, 0};
-    firstField = {0, 0};
-    prevDirection = ShootingDirection::None;
-    interested = false;
-}
-
 // Invert the shooting direction and restore the last shot field as the first one (to be called after missing when interested)
-void Enemy::invertDirection() {
-    if (direction != ShootingDirection::None)
-        direction = static_cast<ShootingDirection>((~static_cast<unsigned>(prevDirection)) & 0x3);
-    prevField = firstField;
+Enemy::ShootingDirection Enemy::getInverseDirection(Enemy::ShootingDirection shootingDirection) {
+    if (shootingDirection != ShootingDirection::None)
+        return static_cast<ShootingDirection>((~static_cast<unsigned>(shootingDirection)) & 0x3);
+    return ShootingDirection::None;
 }
 
 // Set the field to be offset by 'direction' from 'rel'
@@ -40,19 +19,19 @@ Game::Position Enemy::getRelativeTo(ShootingDirection shootingDirection, Game::P
     Game::Position newPosition = rel;
     switch (shootingDirection) {
         case ShootingDirection::Left: {
-            newPosition.x -= (rel.x > 0);
+            newPosition.x -= 1;
             break;
         }
         case ShootingDirection::Right: {
-            newPosition.x += (rel.x < 9);
+            newPosition.x += 1;
             break;
         }
         case ShootingDirection::Up: {
-            newPosition.y -= (rel.y > 0);
+            newPosition.y -= 1;
             break;
         }
         case ShootingDirection::Down: {
-            newPosition.y += (rel.y < 9);
+            newPosition.y += 1;
             break;
         }
     }
@@ -61,65 +40,114 @@ Game::Position Enemy::getRelativeTo(ShootingDirection shootingDirection, Game::P
 
 // Check whether shooting the give field makes sense (if there is no known ships around)
 bool Enemy::sensibleField(Game::Position position) {
-    Game::FieldType f;
-    for (uint8_t i = position.x - (position.x > 0); i <= position.x + 1; i++) {
-        for (uint8_t j = position.y - (position.y > 0); j <= position.y + 1; j++) {
-            if (interested && i == prevField.x && j == prevField.y)
-                continue;
-            f = game->getField(Game::BoardOwner::Player, {i, j});
-            if (f == Game::FieldType::Hit || f == Game::FieldType::Sunk) {
-                if (prevField.x == firstField.x && prevField.y == firstField.y)
-                    forgetDirection();
-                else
-                    invertDirection();
+    if (game->getFieldObscured(Game::BoardOwner::Player, position) != Game::FieldType::Empty)
+        return false;
+
+    for (uint8_t j = position.x - (position.x > 0); j <= position.x + 1; j++) {
+        for (uint8_t k = position.y - (position.y > 0); k <= position.y + 1; k++) {
+            Game::FieldType fieldType = game->getFieldObscured(Game::BoardOwner::Player, {j, k});
+            if (fieldType != Game::FieldType::Empty && fieldType != Game::FieldType::Miss)
                 return false;
-            }
         }
     }
+
     return true;
 }
 
-std::tuple<uint8_t, uint8_t, Game::ShootingResult> Enemy::move() {
-    Game::ShootingResult r;
+std::tuple<Game::Position, Game::ShootingResult> Enemy::move() {
     Game::Position position;
+    Game::ShootingResult shootingResult;
     while (true) {
-        // If the last shot was hit, check the nearby fields
+        // If not interested, choose random coordinates and shoot
         if (!interested) {
             position.x = rand() % 10;
             position.y = rand() % 10;
-        } else {
-            // If there is no shooting direction set, generate a random one
-            if (direction == ShootingDirection::None)
-                direction = static_cast<ShootingDirection>(rand() % 4);
 
-            position = getRelativeTo(direction, prevField);
-        }
-
-        if (sensibleField(position))
-            r = game->shot(Game::BoardOwner::Player, position);
-        else
-            continue;
-
-        if (r == Game::ShootingResult::Miss || r == Game::ShootingResult::Invalid) {
-            if (interested)
-                invertDirection();
-            if (r == Game::ShootingResult::Miss)
+            if (sensibleField(position)) {
+                shootingResult = game->shot(Game::BoardOwner::Player, position);
+                // If hit, remember the position and become interested
+                if (shootingResult == Game::ShootingResult::Hit) {
+                    lastHitPosition = position;
+                    interested = true;
+                }
                 break;
+            }
+            else
+                continue;
         }
+        else {
+            // If there is no shooting direction determined (interested and hit once)
+            if (lastShootingDirection == ShootingDirection::None) {
+                // Choose a random direction and shoot the last hit position's neighbour
+                auto shootingDirection = static_cast<ShootingDirection>(rand() % 4);
+                position = getRelativeTo(shootingDirection, lastHitPosition);
+                if (Game::positionWithinLimits(position))
+                    shootingResult = game->shot(Game::BoardOwner::Player, position);
+                else
+                    continue;
 
-        if (r == Game::ShootingResult::Hit) {
-            memorize(position);
-            break;
-        }
+                // If unable to shoot, retry
+                if (shootingResult == Game::ShootingResult::Invalid)
+                    continue;
+                    // If missed, end move
+                else if (shootingResult == Game::ShootingResult::Miss)
+                    break;
+                    // If hit, remember this position and direction
+                else if (shootingResult == Game::ShootingResult::Hit) {
+                    lastHitPosition = position;
+                    lastShootingDirection = shootingDirection;
+                    break;
+                }
+                    // If sunk, stop being interested (return to random shooting)
+                else if (shootingResult == Game::ShootingResult::Sunk) {
+                    interested = false;
+                    break;
+                }
+            }
+                // If there is a shooting direction determined (interested and hit at least twice)
+            else {
+                // Move to the next field following the determined direction. If the next field has already been hit, continue (try to find the next field after the known ship edge).
+                position = lastHitPosition;
+                do {
+                    position = getRelativeTo(lastShootingDirection, position);
+                } while (game->getFieldObscured(Game::BoardOwner::Player, position) == Game::FieldType::Hit);
 
-        if (r == Game::ShootingResult::Sunk) {
-            forget();
-            break;
+                if (Game::positionWithinLimits(position))
+                    shootingResult = game->shot(Game::BoardOwner::Player, position);
+                else {
+                    lastShootingDirection = getInverseDirection(lastShootingDirection);
+                    continue;
+                }
+
+                // If unable to shoot, invert direction and retry
+                if (shootingResult == Game::ShootingResult::Invalid) {
+                    lastShootingDirection = getInverseDirection(lastShootingDirection);
+                    continue;
+                }
+                    // If missed, invert direction and end move
+                else if (shootingResult == Game::ShootingResult::Miss) {
+                    lastShootingDirection = getInverseDirection(lastShootingDirection);
+                    break;
+                }
+                    // If hit, remember this position
+                else if (shootingResult == Game::ShootingResult::Hit) {
+                    lastHitPosition = position;
+                    break;
+                }
+                    // If sunk, stop being interested and forget the direction
+                else if (shootingResult == Game::ShootingResult::Sunk) {
+                    interested = false;
+                    lastShootingDirection = ShootingDirection::None;
+                    break;
+                }
+            }
         }
     }
-    return {position.x, position.y, r};
+
+    return {position, shootingResult};
 }
 
 void Enemy::reset() {
-    forget();
+    interested = false;
+    lastShootingDirection = ShootingDirection::None;
 }

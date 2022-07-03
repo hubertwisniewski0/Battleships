@@ -104,7 +104,8 @@ Game::ShootingResult Game::shot(BoardOwner boardOwner, Position position) {
             if (sunk(boardOwner, position, false)) {
                 sunk(boardOwner, position, true);
                 return ShootingResult::Sunk;
-            } else
+            }
+            else
                 return ShootingResult::Hit;
     }
 
@@ -115,4 +116,15 @@ Game::FieldType Game::getField(BoardOwner boardOwner, Position position) {
     if (position.x > 9 || position.y > 9)
         return FieldType::Empty;
     return boards[boardOwner][position.x][position.y];
+}
+
+Game::FieldType Game::getFieldObscured(BoardOwner boardOwner, Position position) {
+    FieldType fieldType = getField(boardOwner, position);
+    if (fieldType == FieldType::Ship)
+        return FieldType::Empty;
+    return fieldType;
+}
+
+bool Game::positionWithinLimits(Position position) {
+    return (position.x < 10 && position.y < 10);
 }

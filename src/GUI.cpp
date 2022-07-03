@@ -96,8 +96,8 @@ void GUI::start() {
                 if (game->victory(Game::BoardOwner::Enemy))
                     announceVictory(1);
                 else {
-                    auto [enemyX, enemyY, enemyShootingResult] = enemy->move();
-                    window->updateTexts(1, enemyX, enemyY, enemyShootingResult, false);
+                    auto [enemyPosition, enemyShootingResult] = enemy->move();
+                    window->updateTexts(1, enemyPosition.x, enemyPosition.y, enemyShootingResult, false);
                     if (game->victory(Game::BoardOwner::Player))
                         announceVictory(2);
                 }

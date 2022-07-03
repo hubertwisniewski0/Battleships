@@ -68,7 +68,11 @@ public:
 
     FieldType getField(BoardOwner boardOwner, Position position);
 
+    FieldType getFieldObscured(BoardOwner boardOwner, Position position);
+
     bool victory(BoardOwner boardOwner);
+
+    static bool positionWithinLimits(Position position);
 };
 
 #endif //BATTLESHIPS_GAME_HPP

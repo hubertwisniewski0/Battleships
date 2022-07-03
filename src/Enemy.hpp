@@ -21,22 +21,13 @@ private:
     };
 
     Game *game;
-    Game::Position firstField;
-    Game::Position prevField;
-    ShootingDirection direction;
-    ShootingDirection prevDirection;
+
     bool interested = false;
-
-    // Memorize the last field, shooting direction and its effect (to be called after hitting a ship)
-    void memorize(Game::Position position);
-
-    void forgetDirection();
-
-    // Reset memory (to be called after sinking a ship)
-    void forget();
+    Game::Position lastHitPosition;
+    ShootingDirection lastShootingDirection = ShootingDirection::None;
 
     // Invert the shooting direction and restore the last shot field as the first one (to be called after missing when interested)
-    void invertDirection();
+    ShootingDirection getInverseDirection(Enemy::ShootingDirection shootingDirection);
 
     // Get the field offset by 'shootingDirection' from 'rel'
     Game::Position getRelativeTo(ShootingDirection shootingDirection, Game::Position rel);
@@ -47,7 +38,7 @@ private:
 public:
     explicit Enemy(Game *game);
 
-    std::tuple<uint8_t, uint8_t, Game::ShootingResult> move();
+    std::tuple<Game::Position, Game::ShootingResult> move();
 
     void reset();
 };
