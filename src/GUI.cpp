@@ -38,15 +38,16 @@ GUI::~GUI() {
 void GUI::drawBoards() {
     Game::FieldType f;
     // For each board
-    for (uint8_t i = 0; i < 2; i++) {
+    for (auto boardOwner: {Game::BoardOwner::Player, Game::BoardOwner::Enemy}) {
         // For each column
         for (uint8_t j = 0; j < 10; j++) {
             // For each row
             for (uint8_t k = 0; k < 10; k++) {
-                f = game->field(i, j, k);
-                window->updateBoards(i, j, k,
-                                     (f == Game::FieldType::Ship && i == 1 && victory == 0 ? Game::FieldType::Empty
-                                                                                           : f));
+                f = game->field(boardOwner, j, k);
+                window->updateBoards(boardOwner, j, k,
+                                     (f == Game::FieldType::Ship && boardOwner == Game::BoardOwner::Enemy &&
+                                      victory == 0 ? Game::FieldType::Empty
+                                                   : f));
             }
         }
     }
@@ -85,19 +86,19 @@ void GUI::start() {
                 !victory) {
                 x = (event.button.x - XOFFSET) / 30 - 13;
                 y = event.button.y / 30 - 2;
-                shootingResult = game->shot(1, x, y);
+                shootingResult = game->shot(Game::BoardOwner::Enemy, x, y);
 
                 if (shootingResult == Game::ShootingResult::Invalid)
                     continue;
 
                 window->updateTexts(0, x, y, shootingResult, false);
 
-                if (game->victory(1))
+                if (game->victory(Game::BoardOwner::Enemy))
                     announceVictory(1);
                 else {
                     auto [enemyX, enemyY, enemyShootingResult] = enemy->move();
                     window->updateTexts(1, enemyX, enemyY, enemyShootingResult, false);
-                    if (game->victory(0))
+                    if (game->victory(Game::BoardOwner::Player))
                         announceVictory(2);
                 }
                 drawBoards();

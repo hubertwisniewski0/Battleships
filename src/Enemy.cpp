@@ -55,7 +55,7 @@ bool Enemy::sensibleField(int8_t *field) {
         for (int8_t j = field[1] - 1; j < field[1] + 2; j++) {
             if (interested && i == prev_field[0] && j == prev_field[1])
                 continue;
-            f = game->field(0, i, j);
+            f = game->field(Game::BoardOwner::Player, i, j);
             if (f == Game::FieldType::Hit || f == Game::FieldType::Sunk) {
                 if (prev_field[0] == first_field[0] && prev_field[1] == first_field[1])
                     forgetDirection();
@@ -92,7 +92,7 @@ std::tuple<uint8_t, uint8_t, Game::ShootingResult> Enemy::move() {
         }
 
         if (sensibleField(field))
-            r = game->shot(0, field[0], field[1]);
+            r = game->shot(Game::BoardOwner::Player, field[0], field[1]);
         else
             continue;
 

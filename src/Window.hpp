@@ -13,7 +13,8 @@
 class Window {
 private:
     SDL_Window *window = NULL;
-    Board *board[2] = {NULL, NULL};
+    std::unordered_map<Game::BoardOwner, Board *> boards = {{Game::BoardOwner::Player, NULL},
+                                                            {Game::BoardOwner::Enemy,  NULL}};
     Text *text = NULL;
     Legend *legend = NULL;
     Texts *texts = NULL;
@@ -28,7 +29,7 @@ public:
 
     void draw(uint8_t victory);
 
-    void updateBoards(uint8_t i, uint8_t x, uint8_t y, Game::FieldType fieldType);
+    void updateBoards(Game::BoardOwner boardOwner, uint8_t x, uint8_t y, Game::FieldType fieldType);
 
     void resetTexts();
 

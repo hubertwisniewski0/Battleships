@@ -13,9 +13,9 @@ Window::Window() {
         windowOk = false;
         return;
     }
-    for (uint8_t i = 0; i < 2; i++) {
-        board[i] = new Board;
-        if (!board[i]->ok()) {
+    for (auto &board: boards) {
+        board.second = new Board;
+        if (!board.second->ok()) {
             windowOk = false;
             return;
         }
@@ -44,9 +44,9 @@ Window::~Window() {
         delete legend;
     if (text != NULL)
         delete text;
-    for (uint8_t i = 0; i < 2; i++)
-        if (board[i] != NULL)
-            delete board[i];
+    for (auto &board: boards)
+        if (board.second != NULL)
+            delete board.second;
     if (window != NULL)
         SDL_DestroyWindow(window);
 }
@@ -57,15 +57,15 @@ bool Window::ok() {
 
 void Window::draw(uint8_t victory) {
     SDL_FillRect(SDL_GetWindowSurface(window), NULL, 0);
-    for (uint8_t i = 0; i < 2; i++)
-        board[i]->draw(SDL_GetWindowSurface(window), 29 + 360 * i + XOFFSET, 59);
+    for (auto &board: boards)
+        board.second->draw(SDL_GetWindowSurface(window), 29 + 360 * static_cast<unsigned>(board.first) + XOFFSET, 59);
     legend->draw(SDL_GetWindowSurface(window), 389 + XOFFSET, 374);
     texts->draw(SDL_GetWindowSurface(window));
     SDL_UpdateWindowSurface(window);
 }
 
-void Window::updateBoards(uint8_t i, uint8_t x, uint8_t y, Game::FieldType fieldType) {
-    board[i]->update(x, y, fieldType);
+void Window::updateBoards(Game::BoardOwner boardOwner, uint8_t x, uint8_t y, Game::FieldType fieldType) {
+    boards[boardOwner]->update(x, y, fieldType);
 }
 
 void Window::resetTexts() {

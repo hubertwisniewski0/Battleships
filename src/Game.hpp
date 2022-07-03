@@ -6,6 +6,7 @@
 #define BATTLESHIPS_GAME_HPP
 
 #include <cstdint>
+#include <unordered_map>
 
 class Game {
 public:
@@ -24,17 +25,22 @@ public:
         Sunk
     };
 
+    enum class BoardOwner {
+        Player,
+        Enemy
+    };
+
 private:
-    FieldType boards[2][10][10];
+    std::unordered_map<BoardOwner, std::array<std::array<FieldType, 10>, 10>> boards;
 
     void clearBoards();
 
     void generateBoards();
 
-    bool sunk(uint8_t i, uint8_t x, uint8_t y, uint8_t prevX, uint8_t prevY, bool mark);
+    bool sunk(BoardOwner boardOwner, uint8_t x, uint8_t y, uint8_t prevX, uint8_t prevY, bool mark);
 
-    inline bool sunk(uint8_t i, uint8_t x, uint8_t y, bool mark) {
-        return sunk(i, x, y, x, y, mark);
+    inline bool sunk(BoardOwner boardOwner, uint8_t x, uint8_t y, bool mark) {
+        return sunk(boardOwner, x, y, x, y, mark);
     }
 
 public:
@@ -42,11 +48,11 @@ public:
 
     Game();
 
-    ShootingResult shot(uint8_t i, uint8_t x, uint8_t y);
+    ShootingResult shot(BoardOwner boardOwner, uint8_t x, uint8_t y);
 
-    FieldType field(uint8_t i, uint8_t x, uint8_t y);
+    FieldType field(BoardOwner boardOwner, uint8_t x, uint8_t y);
 
-    bool victory(uint8_t i);
+    bool victory(BoardOwner boardOwner);
 };
 
 #endif //BATTLESHIPS_GAME_HPP
