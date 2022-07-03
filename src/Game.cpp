@@ -18,52 +18,14 @@ void Game::clearBoards() {
 
 void Game::generateBoards() {
     // For each board owner
-    for (auto boardOwner: {BoardOwner::Player, BoardOwner::Enemy}) {
+    for (auto boardOwner: {BoardOwner::Player, BoardOwner::Enemy})
         // For each possible ship length
-        for (uint8_t l = 4; l > 0; l--) {
+        for (uint8_t l = 4; l > 0; l--)
             // For each ship (count)
-            for (uint8_t c = 0; c < 5 - l;) {
-                // Ship start coordinates
-                Position start;
-
-                // Generate a random direction: 0 - horizontal, 1 - vertical
-                uint8_t direction;
-                direction = rand() % 2;
-
-                if (direction == 0) {
-                    start.x = rand() % (10 - (l - 1));
-                    start.y = rand() % 10;
-                } else {
-                    start.x = rand() % 10;
-                    start.y = rand() % (10 - (l - 1));
-                }
-
-                // Check if there is enough space to place a ship (ignore board boundaries)
-                bool available = true;
-                for (uint8_t ckx = start.x - (start.x > 0);
-                     ckx < start.x + (direction == 0 ? l + 1 : 2) && available; ckx++) {
-                    for (uint8_t cky = start.y - (start.y > 0);
-                         cky < start.y + (direction == 0 ? 2 : l + 1) && available; cky++) {
-                        if (ckx < 0 || ckx > 9 || cky < 0 || cky > 9)
-                            continue;
-                        if (getField(boardOwner, {ckx, cky}) != FieldType::Empty)
-                            available = false;
-                    }
-                }
-
-                // If the searched space is available, place the ship and increase the placed ship count
-                if (available) {
-                    if (direction == 0)
-                        for (uint8_t field = start.x; field < start.x + l; field++)
-                            setField(boardOwner, {field, start.y}, FieldType::Ship);
-                    else
-                        for (uint8_t field = start.y; field < start.y + l; field++)
-                            setField(boardOwner, {start.x, field}, FieldType::Ship);
+            for (uint8_t c = 0; c < 5 - l;)
+                if (tryPlaceShip(boardOwner, {static_cast<uint8_t>(rand() % 10), static_cast<uint8_t>(rand() % 10)},
+                                 static_cast<ShipOrientation>(rand() % 2), l))
                     c++;
-                }
-            }
-        }
-    }
 }
 
 bool Game::sunk(BoardOwner boardOwner, Position position, Position prevPosition, bool mark) {
@@ -88,6 +50,28 @@ bool Game::sunk(BoardOwner boardOwner, Position position, Position prevPosition,
     // Mark the fields as sunk if requested
     if (mark)
         setField(boardOwner, position, FieldType::Sunk);
+
+    return true;
+}
+
+bool Game::tryPlaceShip(BoardOwner boardOwner, Position position, ShipOrientation shipOrientation, uint8_t length) {
+    // Check the area around the potential ship to check whether any other ship is already there
+    for (uint8_t j = position.x - (position.x > 0);
+         j <= position.x + (shipOrientation == ShipOrientation::Horizontal ? length : 1); j++) {
+        for (uint8_t k = position.y - (position.y > 0);
+             k <= position.y + (shipOrientation == ShipOrientation::Horizontal ? 1 : length); k++) {
+            if (j > 10 || k > 10 || getField(boardOwner, {j, k}) != FieldType::Empty)
+                return false;
+        }
+    }
+
+    // Place a ship
+    if (shipOrientation == ShipOrientation::Horizontal)
+        for (uint8_t i = position.x; i < position.x + length; i++)
+            setField(boardOwner, {i, position.y}, FieldType::Ship);
+    else
+        for (uint8_t i = position.y; i < position.y + length; i++)
+            setField(boardOwner, {position.x, i}, FieldType::Ship);
 
     return true;
 }
