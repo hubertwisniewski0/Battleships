@@ -24,7 +24,7 @@ void Game::generateBoards() {
             // For each ship (count)
             for (uint8_t c = 0; c < 5 - l;)
                 if (tryPlaceShip(boardOwner, {static_cast<uint8_t>(rand() % 10), static_cast<uint8_t>(rand() % 10)},
-                                 static_cast<ShipOrientation>(rand() % 2), l))
+                                 rand() % 2, l))
                     c++;
 }
 
@@ -54,19 +54,19 @@ bool Game::sunk(BoardOwner boardOwner, Position position, Position prevPosition,
     return true;
 }
 
-bool Game::tryPlaceShip(BoardOwner boardOwner, Position position, ShipOrientation shipOrientation, uint8_t length) {
+bool Game::tryPlaceShip(BoardOwner boardOwner, Position position, bool vertical, uint8_t length) {
     // Check the area around the potential ship to check whether any other ship is already there
     for (uint8_t j = position.x - (position.x > 0);
-         j <= position.x + (shipOrientation == ShipOrientation::Horizontal ? length : 1); j++) {
+         j <= position.x + (vertical ? 1 : length); j++) {
         for (uint8_t k = position.y - (position.y > 0);
-             k <= position.y + (shipOrientation == ShipOrientation::Horizontal ? 1 : length); k++) {
+             k <= position.y + (vertical ? length : 1); k++) {
             if (j > 10 || k > 10 || getField(boardOwner, {j, k}) != FieldType::Empty)
                 return false;
         }
     }
 
     // Place a ship
-    if (shipOrientation == ShipOrientation::Horizontal)
+    if (!vertical)
         for (uint8_t i = position.x; i < position.x + length; i++)
             setField(boardOwner, {i, position.y}, FieldType::Ship);
     else

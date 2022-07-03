@@ -30,11 +30,6 @@ public:
         Enemy
     };
 
-    enum class ShipOrientation {
-        Horizontal,
-        Vertical
-    };
-
     struct Position {
         uint8_t x;
         uint8_t y;
@@ -49,7 +44,7 @@ private:
 
     bool sunk(BoardOwner boardOwner, Position position, Position prevPosition, bool mark);
 
-    bool tryPlaceShip(BoardOwner boardOwner, Position position, ShipOrientation shipOrientation, uint8_t length);
+    bool tryPlaceShip(BoardOwner boardOwner, Position position, bool vertical, uint8_t length);
 
     inline bool sunk(BoardOwner boardOwner, Position position, bool mark) {
         return sunk(boardOwner, position, position, mark);
