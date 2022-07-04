@@ -9,8 +9,7 @@ int main(int argc, char *argv[]) {
     Game game;
     Enemy enemy(&game);
     GUI gui(&game, &enemy);
-    if (!gui.ok())
-        return 1;
+    gui.initialize();
     gui.start();
     return 0;
 }

@@ -3,21 +3,16 @@
 //
 
 #include "Legend.hpp"
-#include "Messages.hpp"
 
-Legend::Legend(Text *text) : text(text) {
+Legend::Legend(MessageService *messageService, Text *text) {
     legend = SDL_CreateRGBSurface(0, 300, 180, 24, 0, 0, 0, 0);
-    if (legend == nullptr) {
-        errorMessage(std::string("SDL_CreateRGBSurface: ") + std::string(SDL_GetError()));
-        legendOk = false;
-        return;
-    }
+    if (legend == nullptr)
+        messageService->showMessage(MessageService::MessageType::Error,
+                                    "SDL_CreateRGBSurface: " + std::string(SDL_GetError()));
     legendColors = SDL_CreateRGBSurface(0, 32, 152, 24, 0, 0, 0, 0);
-    if (legendColors == nullptr) {
-        errorMessage(std::string("SDL_CreateRGBSurface: ") + std::string(SDL_GetError()));
-        legendOk = false;
-        return;
-    }
+    if (legendColors == nullptr)
+        messageService->showMessage(MessageService::MessageType::Error,
+                                    "SDL_CreateRGBSurface: " + std::string(SDL_GetError()));
     SDL_Rect field;
     field.w = 28;
     field.h = 28;
@@ -59,10 +54,6 @@ Legend::~Legend() {
     for (uint8_t i = 0; i < 8; i++)
         if (texts[i] != nullptr)
             SDL_FreeSurface(texts[i]);
-}
-
-bool Legend::ok() {
-    return legendOk;
 }
 
 void Legend::draw(SDL_Surface *target, uint16_t x, uint16_t y) {

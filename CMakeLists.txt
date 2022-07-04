@@ -16,7 +16,6 @@ add_executable(battleships
         src/Game.cpp
         src/GUI.cpp
         src/Legend.cpp
-        src/Messages.cpp
         src/Text.cpp
         src/Texts.cpp
         src/Timer.cpp

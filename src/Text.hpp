@@ -6,20 +6,18 @@
 #define BATTLESHIPS_TEXT_HPP
 
 #include <SDL_ttf.h>
+#include "MessageService.hpp"
 
 class Text {
 private:
     TTF_Font *font = nullptr;
     SDL_Color textColor;
     SDL_Color backgroundColor;
-    bool textOk = true;
 
 public:
-    Text();
+    Text(MessageService *messageService);
 
     ~Text();
-
-    bool ok();
 
     SDL_Surface *renderText(const char *text);
 

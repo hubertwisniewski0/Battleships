@@ -2,24 +2,11 @@
 // Created by hubert25632 on 01.07.22.
 //
 
+#include <iostream>
 #include "GUI.hpp"
-#include "Messages.hpp"
 #include "General.hpp"
 
-GUI::GUI(Game *game, Enemy *enemy) : game(game), enemy(enemy), window(new Window), timer(new Timer) {
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        errorMessage(std::string("SDL_Init: ") + std::string(SDL_GetError()));
-        guiOk = false;
-        return;
-    }
-    if (!window->ok()) {
-        guiOk = false;
-        return;
-    }
-    if (!timer->ok()) {
-        guiOk = false;
-        return;
-    }
+GUI::GUI(Game *game, Enemy *enemy) : game(game), enemy(enemy) {
 }
 
 GUI::~GUI() {
@@ -27,6 +14,16 @@ GUI::~GUI() {
     delete window;
     if (SDL_WasInit(0) != 0)
         SDL_Quit();
+}
+
+void GUI::initialize() {
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+        showMessage(MessageService::MessageType::Error, std::string("SDL_Init: ") + std::string(SDL_GetError()));
+
+    window = new Window(this);
+    window->initialize();
+
+    timer = new Timer(this);
 }
 
 void GUI::drawBoards() {
@@ -59,10 +56,6 @@ void GUI::announceVictory(uint8_t w) {
     victory = w;
     drawBoards();
     window->victory(victory);
-}
-
-bool GUI::ok() {
-    return guiOk;
 }
 
 void GUI::start() {
@@ -115,5 +108,20 @@ void GUI::start() {
             }
         }
         timer->synchronize();
+    }
+}
+
+void GUI::showMessage(MessageType messageType, const std::string &message) {
+    switch (messageType) {
+        case MessageType::Error: {
+            if (SDL_WasInit(SDL_INIT_VIDEO))
+                SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", message.c_str(), window->getWindow());
+            else
+                std::cerr << "Error: " << message << "\n";
+            exit(1);
+        }
+        case MessageType::Victory: {
+            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Victory", message.c_str(), window->getWindow());
+        }
     }
 }

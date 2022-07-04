@@ -33,14 +33,11 @@ private:
     SDL_Surface *sEnemy = nullptr;
     Text *const text;
     int minOffset;
-    bool textsOk = true;
 
 public:
-    Texts(Text *text);
+    Texts(MessageService *messageService, Text *text);
 
     ~Texts();
-
-    bool ok();
 
     void draw(SDL_Surface *target);
 

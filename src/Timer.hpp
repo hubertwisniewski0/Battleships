@@ -6,23 +6,19 @@
 #define BATTLESHIPS_TIMER_HPP
 
 #include <pthread.h>
+#include "MessageService.hpp"
 
 class Timer {
 private:
     pthread_t timer;
     pthread_barrier_t barrier;
-    bool timerOk = true;
-    bool threadOk = true;
-    bool barrierOk = true;
 
     static void *timerCallback(void *barrier);
 
 public:
-    Timer();
+    Timer(MessageService *messageService);
 
     ~Timer();
-
-    bool ok();
 
     void synchronize();
 };

@@ -7,18 +7,16 @@
 
 #include <SDL.h>
 #include "Game.hpp"
+#include "MessageService.hpp"
 
 class Board {
 private:
-    SDL_Surface *board = NULL;
+    SDL_Surface *board = nullptr;
     SDL_Rect field;
-    bool boardOk = true;
 public:
-    Board();
+    Board(MessageService *messageService);
 
     ~Board();
-
-    bool ok();
 
     void update(uint8_t x, uint8_t y, Game::FieldType fieldType);
 

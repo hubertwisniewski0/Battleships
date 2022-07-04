@@ -3,35 +3,14 @@
 //
 
 #include "Window.hpp"
-#include "Messages.hpp"
 #include "General.hpp"
+#include "MessageService.hpp"
 
-Window::Window() : text(new Text), legend(new Legend(text)), texts(new Texts(text)) {
+Window::Window(MessageService *messageService) : messageService(messageService) {
     window = SDL_CreateWindow("Battleships", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, 0);
-    if (window == nullptr) {
-        errorMessage(std::string("SDL_CreateWindow: ") + std::string(SDL_GetError()));
-        windowOk = false;
-        return;
-    }
-    for (auto &board: boards) {
-        board.second = new Board;
-        if (!board.second->ok()) {
-            windowOk = false;
-            return;
-        }
-    }
-    if (!text->ok()) {
-        windowOk = false;
-        return;
-    }
-    if (!legend->ok()) {
-        windowOk = false;
-        return;
-    }
-    if (!texts->ok()) {
-        windowOk = false;
-        return;
-    }
+    if (window == nullptr)
+        messageService->showMessage(MessageService::MessageType::Error,
+                                    "SDL_CreateWindow: " + std::string(SDL_GetError()));
 }
 
 Window::~Window() {
@@ -44,8 +23,12 @@ Window::~Window() {
         SDL_DestroyWindow(window);
 }
 
-bool Window::ok() {
-    return windowOk;
+void Window::initialize() {
+    for (auto &board: boards)
+        board.second = new Board(messageService);
+    text = new Text(messageService);
+    legend = new Legend(messageService, text);
+    texts = new Texts(messageService, text);
 }
 
 void Window::draw(uint8_t victory) {
@@ -70,8 +53,10 @@ void Window::updateTexts(uint8_t i, uint8_t x, uint8_t y, Game::ShootingResult s
 }
 
 void Window::victory(uint8_t w) {
-    if (w == 1)
-        victoryMessage(std::string("Player's victory"), window);
-    else
-        victoryMessage(std::string("Enemy's victory"), window);
+    messageService->showMessage(MessageService::MessageType::Victory,
+                                (w == 1 ? "Player" : "Enemy") + std::string("'s victory"));
+}
+
+SDL_Window *Window::getWindow() {
+    return window;
 }

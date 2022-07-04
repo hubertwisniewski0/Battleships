@@ -12,16 +12,13 @@ class Legend {
 private:
     SDL_Surface *legend = nullptr;
     SDL_Surface *legendColors = nullptr;
-    Text *const text;
+
     SDL_Surface *texts[8] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
-    bool legendOk = true;
 
 public:
-    Legend(Text *text);
+    Legend(MessageService *messageService, Text *text);
 
     ~Legend();
-
-    bool ok();
 
     void draw(SDL_Surface *target, uint16_t x, uint16_t y);
 };

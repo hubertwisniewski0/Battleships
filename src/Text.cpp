@@ -3,20 +3,13 @@
 //
 
 #include "Text.hpp"
-#include "Messages.hpp"
 
-Text::Text() {
-    if (TTF_Init() != 0) {
-        errorMessage(std::string("TTF_Init: ") + std::string(TTF_GetError()));
-        textOk = false;
-        return;
-    }
+Text::Text(MessageService *messageService) {
+    if (TTF_Init() != 0)
+        messageService->showMessage(MessageService::MessageType::Error, "TTF_Init: " + std::string(TTF_GetError()));
     font = TTF_OpenFont(TTF_FONT_PATH, 16);
-    if (font == nullptr) {
-        errorMessage(std::string("TTF_OpenFont: ") + std::string(TTF_GetError()));
-        textOk = false;
-        return;
-    }
+    if (font == nullptr)
+        messageService->showMessage(MessageService::MessageType::Error, "TTF_OpenFont: " + std::string(TTF_GetError()));
     textColor.r = 0xFF;
     textColor.g = 0xFF;
     textColor.b = 0xFF;
@@ -32,10 +25,6 @@ Text::~Text() {
         TTF_CloseFont(font);
     if (TTF_WasInit() != 0)
         TTF_Quit();
-}
-
-bool Text::ok() {
-    return textOk;
 }
 
 SDL_Surface *Text::renderText(const char *text) {

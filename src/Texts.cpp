@@ -3,10 +3,9 @@
 //
 
 #include "Texts.hpp"
-#include "Messages.hpp"
 #include "General.hpp"
 
-Texts::Texts(Text *text) : text(text) {
+Texts::Texts(MessageService *messageService, Text *text) : text(text) {
     minOffset = text->getMinOffset();
     texts[0] = text->renderText("Player's sea");
     texts[1] = text->renderText("Enemy's sea");
@@ -17,12 +16,10 @@ Texts::Texts(Text *text) : text(text) {
     texts[6] = text->renderText("Hit");
     texts[7] = text->renderText("Sunk");
     for (uint8_t i = 0; i < 8; i++) {
-        if (texts[i] == nullptr) {
-            errorMessage(std::string("Rendering text n") + std::to_string((int) i) + std::string(": ") +
-                         std::string(TTF_GetError()));
-            textsOk = false;
-            return;
-        }
+        if (texts[i] == nullptr)
+            messageService->showMessage(MessageService::MessageType::Error,
+                                        "Rendering text n" + std::to_string((int) i) + std::string(": ") +
+                                        std::string(TTF_GetError()));
     }
     char t[2];
     char c[3];
@@ -43,31 +40,24 @@ Texts::Texts(Text *text) : text(text) {
             }
             if (i == 0) {
                 numbers[j] = text->renderText(c);
-                if (numbers[j] == nullptr) {
-                    errorMessage(std::string("Rendering text c") + std::to_string((int) j) + std::string(": ") +
-                                 std::string(TTF_GetError()));
-                    textsOk = false;
-                    return;
-                }
+                if (numbers[j] == nullptr)
+                    messageService->showMessage(MessageService::MessageType::Error,
+                                                "Rendering text c" + std::to_string((int) j) + std::string(": ") +
+                                                std::string(TTF_GetError()));
             }
             w[0] = 0;
             strcat(w, t);
             strcat(w, c);
             readings[i][j] = text->renderText(w);
-            if (readings[i][j] == nullptr) {
-                errorMessage(
-                        std::string("Rendering text w") + std::to_string((int) i) + std::to_string((int) j) +
-                        std::string(": ") + std::string(TTF_GetError()));
-                textsOk = false;
-                return;
-            }
+            if (readings[i][j] == nullptr)
+                messageService->showMessage(MessageService::MessageType::Error,
+                                            "Rendering text w" + std::to_string((int) i) + std::to_string((int) j) +
+                                            std::string(": ") + std::string(TTF_GetError()));
         }
-        if (letters[i] == nullptr) {
-            errorMessage(std::string("Rendering text t") + std::to_string((int) i) + std::string(": ") +
-                         std::string(TTF_GetError()));
-            textsOk = false;
-            return;
-        }
+        if (letters[i] == nullptr)
+            messageService->showMessage(MessageService::MessageType::Error,
+                                        "Rendering text t" + std::to_string((int) i) + std::string(": ") +
+                                        std::string(TTF_GetError()));
     }
 }
 
@@ -84,10 +74,6 @@ Texts::~Texts() {
     for (uint8_t i = 0; i < 8; i++)
         if (texts[i] != nullptr)
             SDL_FreeSurface(texts[i]);
-}
-
-bool Texts::ok() {
-    return textsOk;
 }
 
 void Texts::draw(SDL_Surface *target) {
