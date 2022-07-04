@@ -9,7 +9,7 @@
 
 class Text {
 private:
-    TTF_Font *font = NULL;
+    TTF_Font *font = nullptr;
     SDL_Color textColor;
     SDL_Color backgroundColor;
     bool textOk = true;

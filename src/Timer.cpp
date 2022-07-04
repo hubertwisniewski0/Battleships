@@ -9,14 +9,14 @@
 
 Timer::Timer() {
     int e;
-    e = pthread_barrier_init(&barrier, NULL, 2);
+    e = pthread_barrier_init(&barrier, nullptr, 2);
     if (e != 0) {
         errorMessage(std::string("pthread_barrier_init: ") + std::string(strerror(e)));
         timerOk = false;
         barrierOk = false;
         return;
     }
-    e = pthread_create(&timer, NULL, timerCallback, &barrier);
+    e = pthread_create(&timer, nullptr, timerCallback, &barrier);
     if (e != 0) {
         errorMessage(std::string("pthread_create: ") + std::string(strerror(e)));
         timerOk = false;

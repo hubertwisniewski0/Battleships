@@ -12,7 +12,7 @@ Text::Text() {
         return;
     }
     font = TTF_OpenFont(TTF_FONT_PATH, 16);
-    if (font == NULL) {
+    if (font == nullptr) {
         errorMessage(std::string("TTF_OpenFont: ") + std::string(TTF_GetError()));
         textOk = false;
         return;
@@ -28,7 +28,7 @@ Text::Text() {
 }
 
 Text::~Text() {
-    if (font != NULL)
+    if (font != nullptr)
         TTF_CloseFont(font);
     if (TTF_WasInit() != 0)
         TTF_Quit();
@@ -46,7 +46,7 @@ void Text::drawText(SDL_Surface *text, SDL_Surface *target, uint16_t x, uint16_t
     SDL_Rect position;
     position.x = x;
     position.y = y;
-    SDL_BlitSurface(text, NULL, target, &position);
+    SDL_BlitSurface(text, nullptr, target, &position);
 
 }
 

@@ -13,15 +13,16 @@
 
 class GUI {
 private:
-    Window *window = NULL;
-    Timer *timer = NULL;
+    Game *const game;
+    Enemy *const enemy;
+    Window *const window;
+    Timer *const timer;
+
     SDL_Event event;
     bool quit = false;
-    uint8_t victory = 0;
-    Game *game;
-    Enemy *enemy;
-    uint8_t x, y;
     bool guiOk = true;
+    uint8_t victory = 0;
+    uint8_t x, y;
 
     void drawBoards();
 
@@ -30,7 +31,7 @@ private:
     void announceVictory(uint8_t w);
 
 public:
-    GUI(Game *G, Enemy *K);
+    GUI(Game *game, Enemy *enemy);
 
     ~GUI();
 

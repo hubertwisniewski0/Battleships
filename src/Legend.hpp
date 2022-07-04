@@ -10,14 +10,14 @@
 
 class Legend {
 private:
-    SDL_Surface *legend = NULL;
-    SDL_Surface *legendColors = NULL;
-    Text *text = NULL;
-    SDL_Surface *texts[8] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+    SDL_Surface *legend = nullptr;
+    SDL_Surface *legendColors = nullptr;
+    Text *const text;
+    SDL_Surface *texts[8] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
     bool legendOk = true;
 
 public:
-    Legend(Text *T);
+    Legend(Text *text);
 
     ~Legend();
 

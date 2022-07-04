@@ -12,12 +12,14 @@
 
 class Window {
 private:
-    SDL_Window *window = NULL;
+    SDL_Window *window = nullptr;
     std::unordered_map<Game::BoardOwner, Board *> boards = {{Game::BoardOwner::Player, NULL},
                                                             {Game::BoardOwner::Enemy,  NULL}};
-    Text *text = NULL;
-    Legend *legend = NULL;
-    Texts *texts = NULL;
+
+    Text *const text;
+    Legend *const legend;
+    Texts *const texts;
+
     bool windowOk = true;
 
 public:

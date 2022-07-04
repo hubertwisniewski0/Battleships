@@ -6,9 +6,9 @@
 #include "Messages.hpp"
 #include "General.hpp"
 
-Window::Window() {
+Window::Window() : text(new Text), legend(new Legend(text)), texts(new Texts(text)) {
     window = SDL_CreateWindow("Battleships", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, 0);
-    if (window == NULL) {
+    if (window == nullptr) {
         errorMessage(std::string("SDL_CreateWindow: ") + std::string(SDL_GetError()));
         windowOk = false;
         return;
@@ -20,17 +20,14 @@ Window::Window() {
             return;
         }
     }
-    text = new Text;
     if (!text->ok()) {
         windowOk = false;
         return;
     }
-    legend = new Legend(text);
     if (!legend->ok()) {
         windowOk = false;
         return;
     }
-    texts = new Texts(text);
     if (!texts->ok()) {
         windowOk = false;
         return;
@@ -38,16 +35,12 @@ Window::Window() {
 }
 
 Window::~Window() {
-    if (texts != NULL)
-        delete texts;
-    if (legend != NULL)
-        delete legend;
-    if (text != NULL)
-        delete text;
+    delete texts;
+    delete legend;
+    delete text;
     for (auto &board: boards)
-        if (board.second != NULL)
-            delete board.second;
-    if (window != NULL)
+        delete board.second;
+    if (window != nullptr)
         SDL_DestroyWindow(window);
 }
 
@@ -56,7 +49,7 @@ bool Window::ok() {
 }
 
 void Window::draw(uint8_t victory) {
-    SDL_FillRect(SDL_GetWindowSurface(window), NULL, 0);
+    SDL_FillRect(SDL_GetWindowSurface(window), nullptr, 0);
     for (auto &board: boards)
         board.second->draw(SDL_GetWindowSurface(window), 29 + 360 * static_cast<unsigned>(board.first) + XOFFSET, 59);
     legend->draw(SDL_GetWindowSurface(window), 389 + XOFFSET, 374);

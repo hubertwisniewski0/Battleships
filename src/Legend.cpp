@@ -5,20 +5,19 @@
 #include "Legend.hpp"
 #include "Messages.hpp"
 
-Legend::Legend(Text *T) {
+Legend::Legend(Text *text) : text(text) {
     legend = SDL_CreateRGBSurface(0, 300, 180, 24, 0, 0, 0, 0);
-    if (legend == NULL) {
+    if (legend == nullptr) {
         errorMessage(std::string("SDL_CreateRGBSurface: ") + std::string(SDL_GetError()));
         legendOk = false;
         return;
     }
     legendColors = SDL_CreateRGBSurface(0, 32, 152, 24, 0, 0, 0, 0);
-    if (legendColors == NULL) {
+    if (legendColors == nullptr) {
         errorMessage(std::string("SDL_CreateRGBSurface: ") + std::string(SDL_GetError()));
         legendOk = false;
         return;
     }
-    text = T;
     SDL_Rect field;
     field.w = 28;
     field.h = 28;
@@ -29,7 +28,7 @@ Legend::Legend(Text *T) {
     colors[2] = 0x7F7F7F;
     colors[3] = 0xFFFF00;
     colors[4] = 0xFF0000;
-    SDL_FillRect(legendColors, NULL, 0xFFFFFF);
+    SDL_FillRect(legendColors, nullptr, 0xFFFFFF);
     for (uint8_t i = 0; i < 5; i++) {
         field.y = i * (field.h + 2) + 2;
         SDL_FillRect(legendColors, &field, colors[i]);
@@ -49,16 +48,16 @@ Legend::Legend(Text *T) {
     SDL_Rect legendColorsPosition;
     legendColorsPosition.x = 0;
     legendColorsPosition.y = 28;
-    SDL_BlitSurface(legendColors, NULL, legend, &legendColorsPosition);
+    SDL_BlitSurface(legendColors, nullptr, legend, &legendColorsPosition);
 }
 
 Legend::~Legend() {
-    if (legend != NULL)
+    if (legend != nullptr)
         SDL_FreeSurface(legend);
-    if (legendColors != NULL)
+    if (legendColors != nullptr)
         SDL_FreeSurface(legendColors);
     for (uint8_t i = 0; i < 8; i++)
-        if (texts[i] != NULL)
+        if (texts[i] != nullptr)
             SDL_FreeSurface(texts[i]);
 }
 
@@ -70,5 +69,5 @@ void Legend::draw(SDL_Surface *target, uint16_t x, uint16_t y) {
     SDL_Rect position;
     position.x = x;
     position.y = y;
-    SDL_BlitSurface(legend, NULL, target, &position);
+    SDL_BlitSurface(legend, nullptr, target, &position);
 }

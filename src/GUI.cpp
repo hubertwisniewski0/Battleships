@@ -6,31 +6,25 @@
 #include "Messages.hpp"
 #include "General.hpp"
 
-GUI::GUI(Game *G, Enemy *K) {
+GUI::GUI(Game *game, Enemy *enemy) : game(game), enemy(enemy), window(new Window), timer(new Timer) {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         errorMessage(std::string("SDL_Init: ") + std::string(SDL_GetError()));
         guiOk = false;
         return;
     }
-    window = new Window;
     if (!window->ok()) {
         guiOk = false;
         return;
     }
-    timer = new Timer;
     if (!timer->ok()) {
         guiOk = false;
         return;
     }
-    game = G;
-    enemy = K;
 }
 
 GUI::~GUI() {
-    if (timer != NULL)
-        delete timer;
-    if (window != NULL)
-        delete window;
+    delete timer;
+    delete window;
     if (SDL_WasInit(0) != 0)
         SDL_Quit();
 }

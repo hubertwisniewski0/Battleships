@@ -7,7 +7,7 @@
 
 void errorMessage(std::string message) {
     if (SDL_WasInit(SDL_INIT_VIDEO))
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", message.c_str(), NULL);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", message.c_str(), nullptr);
     else
         std::cerr << message << "\n";
 }
