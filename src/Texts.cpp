@@ -77,23 +77,23 @@ Texts::~Texts() {
 }
 
 void Texts::draw(SDL_Surface *target) {
-    text->drawText(texts[0], target, 180 - texts[0]->w / 2 + XOFFSET, 15 - texts[0]->h / 2);
-    text->drawText(texts[1], target, 540 - texts[1]->w / 2 + XOFFSET, 15 - texts[1]->h / 2);
-    text->drawText(texts[2], target, 30 + XOFFSET, 375 - texts[2]->h / 2);
-    text->drawText(texts[3], target, 30 + XOFFSET, 375 - texts[3]->h / 2 + minOffset);
+    text->drawText(texts[0], target, 180 - texts[0]->w / 2 + boardXOffset, 15 - texts[0]->h / 2);
+    text->drawText(texts[1], target, 540 - texts[1]->w / 2 + boardXOffset, 15 - texts[1]->h / 2);
+    text->drawText(texts[2], target, 30 + boardXOffset, 375 - texts[2]->h / 2);
+    text->drawText(texts[3], target, 30 + boardXOffset, 375 - texts[3]->h / 2 + minOffset);
     if (playerReading != nullptr)
-        text->drawText(playerReading, target, 90 + XOFFSET, 375 - playerReading->h / 2);
+        text->drawText(playerReading, target, 90 + boardXOffset, 375 - playerReading->h / 2);
     if (enemyReading != nullptr)
-        text->drawText(enemyReading, target, 90 + XOFFSET, 375 - enemyReading->h / 2 + minOffset);
+        text->drawText(enemyReading, target, 90 + boardXOffset, 375 - enemyReading->h / 2 + minOffset);
     if (sPlayer != nullptr)
-        text->drawText(sPlayer, target, 150 + XOFFSET, 375 - sPlayer->h / 2);
+        text->drawText(sPlayer, target, 150 + boardXOffset, 375 - sPlayer->h / 2);
     if (sEnemy != nullptr)
-        text->drawText(sEnemy, target, 150 + XOFFSET, 375 - sEnemy->h / 2 + minOffset);
+        text->drawText(sEnemy, target, 150 + boardXOffset, 375 - sEnemy->h / 2 + minOffset);
     for (uint8_t i = 0; i < 10; i++) {
-        text->drawText(letters[i], target, 45 + (30 * i) - letters[i]->w / 2 + XOFFSET, 45 - letters[i]->h / 2);
-        text->drawText(letters[i], target, 405 + (30 * i) - letters[i]->w / 2 + XOFFSET, 45 - letters[i]->h / 2);
-        text->drawText(numbers[i], target, 15 - numbers[i]->w / 2 + XOFFSET, 75 + (30 * i) - numbers[i]->h / 2);
-        text->drawText(numbers[i], target, 375 - numbers[i]->w / 2 + XOFFSET, 75 + (30 * i) - numbers[i]->h / 2);
+        text->drawText(letters[i], target, 45 + (30 * i) - letters[i]->w / 2 + boardXOffset, 45 - letters[i]->h / 2);
+        text->drawText(letters[i], target, 405 + (30 * i) - letters[i]->w / 2 + boardXOffset, 45 - letters[i]->h / 2);
+        text->drawText(numbers[i], target, 15 - numbers[i]->w / 2 + boardXOffset, 75 + (30 * i) - numbers[i]->h / 2);
+        text->drawText(numbers[i], target, 375 - numbers[i]->w / 2 + boardXOffset, 75 + (30 * i) - numbers[i]->h / 2);
     }
 }
 

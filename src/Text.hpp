@@ -11,8 +11,6 @@
 class Text {
 private:
     TTF_Font *font = nullptr;
-    SDL_Color textColor;
-    SDL_Color backgroundColor;
 
 public:
     Text(MessageService *messageService);

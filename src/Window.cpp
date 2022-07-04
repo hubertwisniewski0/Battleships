@@ -7,7 +7,7 @@
 #include "MessageService.hpp"
 
 Window::Window(MessageService *messageService) : messageService(messageService) {
-    window = SDL_CreateWindow("Battleships", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, 0);
+    window = SDL_CreateWindow("Battleships", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, 0);
     if (window == nullptr)
         messageService->showMessage(MessageService::MessageType::Error,
                                     "SDL_CreateWindow: " + std::string(SDL_GetError()));
@@ -34,8 +34,8 @@ void Window::initialize() {
 void Window::draw(uint8_t victory) {
     SDL_FillRect(SDL_GetWindowSurface(window), nullptr, 0);
     for (auto &board: boards)
-        board.second->draw(SDL_GetWindowSurface(window), 29 + 360 * static_cast<unsigned>(board.first) + XOFFSET, 59);
-    legend->draw(SDL_GetWindowSurface(window), 389 + XOFFSET, 374);
+        board.second->draw(SDL_GetWindowSurface(window), graphicsXOffset + boardIterativeOffset * static_cast<unsigned>(board.first) + boardXOffset, graphicsYOffset);
+    legend->draw(SDL_GetWindowSurface(window), legendBaseXOffset + boardXOffset, legendYOffset);
     texts->draw(SDL_GetWindowSurface(window));
     SDL_UpdateWindowSurface(window);
 }

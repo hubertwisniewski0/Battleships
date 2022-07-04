@@ -5,12 +5,11 @@
 #include "Board.hpp"
 
 Board::Board(MessageService *messageService) {
-    board = SDL_CreateRGBSurface(0, 302, 302, 24, 0, 0, 0, 0);
+    board = SDL_CreateRGBSurface(0, boardWidth, boardHeight, 24, 0, 0, 0, 0);
     if (board == nullptr)
         messageService->showMessage(MessageService::MessageType::Error,
                                     "SDL_CreateRGBSurface: " + std::string(SDL_GetError()));
-    field.h = 28;
-    field.w = 28;
+    field = {0,0, boardFieldWidth, boardFieldHeight};
     SDL_FillRect(board, nullptr, 0xFFFFFF);
 }
 
@@ -55,8 +54,6 @@ void Board::update(uint8_t x, uint8_t y, Game::FieldType fieldType) {
 }
 
 void Board::draw(SDL_Surface *target, uint16_t x, uint16_t y) {
-    SDL_Rect position;
-    position.x = x;
-    position.y = y;
+    SDL_Rect position {x,y};
     SDL_BlitSurface(board, nullptr, target, &position);
 }

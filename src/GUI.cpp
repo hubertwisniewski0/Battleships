@@ -68,10 +68,10 @@ void GUI::start() {
             if (event.type == SDL_MOUSEMOTION)
                 window->draw(victory);
             if (event.type == SDL_MOUSEBUTTONDOWN &&
-                event.button.x - XOFFSET >= 390 && event.button.x - XOFFSET < 690 &&
+                event.button.x - boardXOffset >= 390 && event.button.x - boardXOffset < 690 &&
                 event.button.y >= 60 && event.button.y < 360 &&
                 !victory) {
-                x = (event.button.x - XOFFSET) / 30 - 13;
+                x = (event.button.x - boardXOffset) / 30 - 13;
                 y = event.button.y / 30 - 2;
                 shootingResult = game->shot(Game::BoardOwner::Enemy, {x, y});
 

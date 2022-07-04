@@ -4,20 +4,15 @@
 
 #include "Text.hpp"
 
+constexpr SDL_Color textColor = {0xff, 0xff, 0xff, 0xff};
+constexpr SDL_Color backgroundColor = {0x00, 0x00, 0x00, 0xff};
+
 Text::Text(MessageService *messageService) {
     if (TTF_Init() != 0)
         messageService->showMessage(MessageService::MessageType::Error, "TTF_Init: " + std::string(TTF_GetError()));
     font = TTF_OpenFont(TTF_FONT_PATH, 16);
     if (font == nullptr)
         messageService->showMessage(MessageService::MessageType::Error, "TTF_OpenFont: " + std::string(TTF_GetError()));
-    textColor.r = 0xFF;
-    textColor.g = 0xFF;
-    textColor.b = 0xFF;
-    textColor.a = 0xFF;
-    backgroundColor.r = 0x00;
-    backgroundColor.g = 0x00;
-    backgroundColor.b = 0x00;
-    backgroundColor.a = 0xFF;
 }
 
 Text::~Text() {

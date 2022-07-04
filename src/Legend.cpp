@@ -3,26 +3,21 @@
 //
 
 #include "Legend.hpp"
+#include "General.hpp"
+
+constexpr uint32_t colors[] = {0x0000ff, 0x00ff00, 0x7f7f7f, 0xffff00, 0xff0000};
+
 
 Legend::Legend(MessageService *messageService, Text *text) {
-    legend = SDL_CreateRGBSurface(0, 300, 180, 24, 0, 0, 0, 0);
+    legend = SDL_CreateRGBSurface(0, legendWidth, legendHeight, 24, 0, 0, 0, 0);
     if (legend == nullptr)
         messageService->showMessage(MessageService::MessageType::Error,
                                     "SDL_CreateRGBSurface: " + std::string(SDL_GetError()));
-    legendColors = SDL_CreateRGBSurface(0, 32, 152, 24, 0, 0, 0, 0);
+    legendColors = SDL_CreateRGBSurface(0, legendColorsWidth, legendColorsHeight, 24, 0, 0, 0, 0);
     if (legendColors == nullptr)
         messageService->showMessage(MessageService::MessageType::Error,
                                     "SDL_CreateRGBSurface: " + std::string(SDL_GetError()));
-    SDL_Rect field;
-    field.w = 28;
-    field.h = 28;
-    field.x = 2;
-    uint32_t colors[5];
-    colors[0] = 0x0000FF;
-    colors[1] = 0x00FF00;
-    colors[2] = 0x7F7F7F;
-    colors[3] = 0xFFFF00;
-    colors[4] = 0xFF0000;
+    SDL_Rect field {2,0,boardFieldWidth,boardFieldHeight};
     SDL_FillRect(legendColors, nullptr, 0xFFFFFF);
     for (uint8_t i = 0; i < 5; i++) {
         field.y = i * (field.h + 2) + 2;
@@ -57,8 +52,6 @@ Legend::~Legend() {
 }
 
 void Legend::draw(SDL_Surface *target, uint16_t x, uint16_t y) {
-    SDL_Rect position;
-    position.x = x;
-    position.y = y;
+    SDL_Rect position {x,y};
     SDL_BlitSurface(legend, nullptr, target, &position);
 }
