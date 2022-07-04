@@ -10,18 +10,15 @@
 
 class Legend {
 private:
-    SDL_Surface *legend = NULL;
-    SDL_Surface *legendColors = NULL;
-    Text *text = NULL;
-    SDL_Surface *texts[8] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-    bool legendOk = true;
+    SDL_Surface *legend = nullptr;
+    SDL_Surface *legendColors = nullptr;
+
+    SDL_Surface *texts[8] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
 public:
-    Legend(Text *T);
+    Legend(MessageService *messageService, Text *text);
 
     ~Legend();
-
-    bool ok();
 
     void draw(SDL_Surface *target, uint16_t x, uint16_t y);
 };

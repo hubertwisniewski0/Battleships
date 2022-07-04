@@ -9,33 +9,37 @@
 #include "Texts.hpp"
 #include "Legend.hpp"
 #include "Game.hpp"
+#include "MessageService.hpp"
 
 class Window {
 private:
-    SDL_Window *window = NULL;
+    SDL_Window *window = nullptr;
     std::unordered_map<Game::BoardOwner, Board *> boards = {{Game::BoardOwner::Player, NULL},
                                                             {Game::BoardOwner::Enemy,  NULL}};
-    Text *text = NULL;
-    Legend *legend = NULL;
-    Texts *texts = NULL;
-    bool windowOk = true;
+
+    MessageService *const messageService;
+    Text *text;
+    Legend *legend;
+    Texts *texts;
 
 public:
-    Window();
+    explicit Window(MessageService *messageService);
 
     ~Window();
 
-    bool ok();
+    void initialize();
 
-    void draw(uint8_t victory);
+    void draw();
 
-    void updateBoards(Game::BoardOwner boardOwner, uint8_t x, uint8_t y, Game::FieldType fieldType);
+    void updateBoards(Game::BoardOwner boardOwner, Game::Position position, Game::FieldType fieldType);
 
     void resetTexts();
 
-    void updateTexts(uint8_t i, uint8_t x, uint8_t y, Game::ShootingResult shootingResult, bool reset);
+    void updateTexts(Game::BoardOwner boardOwner, Game::Position position, Game::ShootingResult shootingResult);
 
     void victory(uint8_t w);
+
+    SDL_Window *getWindow();
 };
 
 #endif //BATTLESHIPS_WINDOW_HPP

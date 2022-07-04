@@ -11,38 +11,38 @@
 
 class Texts {
 private:
-    SDL_Surface *texts[8] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-    SDL_Surface *letters[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-    SDL_Surface *numbers[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+    SDL_Surface *texts[8] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+    SDL_Surface *letters[10] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+                                nullptr};
+    SDL_Surface *numbers[10] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+                                nullptr};
     SDL_Surface *readings[10][10] = {
-            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
-            {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}};
-    SDL_Surface *playerReading = NULL;
-    SDL_Surface *enemyReading = NULL;
-    SDL_Surface *sPlayer = NULL;
-    SDL_Surface *sEnemy = NULL;
-    Text *text = NULL;
+            {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
+            {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
+            {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
+            {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
+            {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
+            {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
+            {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
+            {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
+            {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
+            {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}};
+    SDL_Surface *playerReading = nullptr;
+    SDL_Surface *enemyReading = nullptr;
+    SDL_Surface *sPlayer = nullptr;
+    SDL_Surface *sEnemy = nullptr;
     int minOffset;
-    bool textsOk = true;
 
 public:
-    Texts(Text *T);
+    Texts(MessageService *messageService, Text *text);
 
     ~Texts();
 
-    bool ok();
-
     void draw(SDL_Surface *target);
 
-    void updateTexts(uint8_t i, uint8_t x, uint8_t y, Game::ShootingResult shootingResult, bool reset);
+    void updateTexts(Game::BoardOwner boardOwner, Game::Position position, Game::ShootingResult shootingResult);
+
+    void resetTexts();
 };
 
 #endif //BATTLESHIPS_TEXTS_HPP

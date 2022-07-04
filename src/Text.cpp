@@ -3,39 +3,23 @@
 //
 
 #include "Text.hpp"
-#include "Messages.hpp"
 
-Text::Text() {
-    if (TTF_Init() != 0) {
-        errorMessage(std::string("TTF_Init: ") + std::string(TTF_GetError()));
-        textOk = false;
-        return;
-    }
+constexpr SDL_Color textColor = {0xff, 0xff, 0xff, 0xff};
+constexpr SDL_Color backgroundColor = {0x00, 0x00, 0x00, 0xff};
+
+Text::Text(MessageService *messageService) {
+    if (TTF_Init() != 0)
+        messageService->showMessage(MessageService::MessageType::Error, "TTF_Init: " + std::string(TTF_GetError()));
     font = TTF_OpenFont(TTF_FONT_PATH, 16);
-    if (font == NULL) {
-        errorMessage(std::string("TTF_OpenFont: ") + std::string(TTF_GetError()));
-        textOk = false;
-        return;
-    }
-    textColor.r = 0xFF;
-    textColor.g = 0xFF;
-    textColor.b = 0xFF;
-    textColor.a = 0xFF;
-    backgroundColor.r = 0x00;
-    backgroundColor.g = 0x00;
-    backgroundColor.b = 0x00;
-    backgroundColor.a = 0xFF;
+    if (font == nullptr)
+        messageService->showMessage(MessageService::MessageType::Error, "TTF_OpenFont: " + std::string(TTF_GetError()));
 }
 
 Text::~Text() {
-    if (font != NULL)
+    if (font != nullptr)
         TTF_CloseFont(font);
     if (TTF_WasInit() != 0)
         TTF_Quit();
-}
-
-bool Text::ok() {
-    return textOk;
 }
 
 SDL_Surface *Text::renderText(const char *text) {
@@ -43,10 +27,8 @@ SDL_Surface *Text::renderText(const char *text) {
 }
 
 void Text::drawText(SDL_Surface *text, SDL_Surface *target, uint16_t x, uint16_t y) {
-    SDL_Rect position;
-    position.x = x;
-    position.y = y;
-    SDL_BlitSurface(text, NULL, target, &position);
+    SDL_Rect position{x, y};
+    SDL_BlitSurface(text, nullptr, target, &position);
 
 }
 

@@ -9,19 +9,20 @@
 #include "Timer.hpp"
 #include "Game.hpp"
 #include "Enemy.hpp"
+#include "MessageService.hpp"
 #include <SDL.h>
 
-class GUI {
+class GUI : public MessageService {
 private:
-    Window *window = NULL;
-    Timer *timer = NULL;
+    Game *const game;
+    Enemy *const enemy;
+    Window *window;
+    Timer *timer;
+
     SDL_Event event;
     bool quit = false;
     uint8_t victory = 0;
-    Game *game;
-    Enemy *enemy;
     uint8_t x, y;
-    bool guiOk = true;
 
     void drawBoards();
 
@@ -30,13 +31,15 @@ private:
     void announceVictory(uint8_t w);
 
 public:
-    GUI(Game *G, Enemy *K);
+    GUI(Game *game, Enemy *enemy);
 
     ~GUI();
 
-    bool ok();
+    void initialize();
 
     void start();
+
+    void showMessage(MessageType messageType, const std::string &message) override;
 };
 
 #endif //BATTLESHIPS_GUI_HPP
