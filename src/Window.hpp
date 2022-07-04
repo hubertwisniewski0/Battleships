@@ -31,11 +31,11 @@ public:
 
     void draw(uint8_t victory);
 
-    void updateBoards(Game::BoardOwner boardOwner, uint8_t x, uint8_t y, Game::FieldType fieldType);
+    void updateBoards(Game::BoardOwner boardOwner, Game::Position position, Game::FieldType fieldType);
 
     void resetTexts();
 
-    void updateTexts(uint8_t i, uint8_t x, uint8_t y, Game::ShootingResult shootingResult, bool reset);
+    void updateTexts(Game::BoardOwner boardOwner, Game::Position position, Game::ShootingResult shootingResult);
 
     void victory(uint8_t w);
 

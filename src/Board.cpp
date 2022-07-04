@@ -9,7 +9,6 @@ Board::Board(MessageService *messageService) {
     if (board == nullptr)
         messageService->showMessage(MessageService::MessageType::Error,
                                     "SDL_CreateRGBSurface: " + std::string(SDL_GetError()));
-    field = {0,0, boardFieldWidth, boardFieldHeight};
     SDL_FillRect(board, nullptr, 0xFFFFFF);
 }
 
@@ -18,11 +17,11 @@ Board::~Board() {
         SDL_FreeSurface(board);
 }
 
-void Board::update(uint8_t x, uint8_t y, Game::FieldType fieldType) {
-    if (x > 9 || y > 9)
+void Board::update(Game::Position position, Game::FieldType fieldType) {
+    if (!Game::positionWithinLimits(position))
         return;
-    field.x = x * (field.w + 2) + 2;
-    field.y = y * (field.h + 2) + 2;
+    SDL_Rect field = {position.x * (field.w + 2) + 2, position.y * (field.h + 2) + 2, boardFieldWidth,
+                      boardFieldHeight};
     uint32_t color;
     switch (fieldType) {
         case Game::FieldType::Empty: {
@@ -54,6 +53,6 @@ void Board::update(uint8_t x, uint8_t y, Game::FieldType fieldType) {
 }
 
 void Board::draw(SDL_Surface *target, uint16_t x, uint16_t y) {
-    SDL_Rect position {x,y};
+    SDL_Rect position{x, y};
     SDL_BlitSurface(board, nullptr, target, &position);
 }

@@ -97,46 +97,28 @@ void Texts::draw(SDL_Surface *target) {
     }
 }
 
-void Texts::updateTexts(uint8_t i, uint8_t x, uint8_t y, Game::ShootingResult shootingResult, bool reset) {
-    if (reset) {
-        playerReading = nullptr;
-        enemyReading = nullptr;
-        sPlayer = nullptr;
-        sEnemy = nullptr;
-        return;
-    }
-    if (i == 0) {
-        playerReading = readings[x][y];
-        switch (shootingResult) {
-            case Game::ShootingResult::Miss: {
-                sPlayer = texts[5];
-                break;
-            }
-            case Game::ShootingResult::Hit: {
-                sPlayer = texts[6];
-                break;
-            }
-            case Game::ShootingResult::Sunk: {
-                sPlayer = texts[7];
-                break;
-            }
+void Texts::updateTexts(Game::BoardOwner boardOwner, Game::Position position, Game::ShootingResult shootingResult) {
+    (boardOwner == Game::BoardOwner::Player ? playerReading : enemyReading) = readings[position.x][position.y];
+
+    switch (shootingResult) {
+        case Game::ShootingResult::Miss: {
+            (boardOwner == Game::BoardOwner::Player ? sPlayer : sEnemy) = texts[5];
+            break;
+        }
+        case Game::ShootingResult::Hit: {
+            (boardOwner == Game::BoardOwner::Player ? sPlayer : sEnemy) = texts[6];
+            break;
+        }
+        case Game::ShootingResult::Sunk: {
+            (boardOwner == Game::BoardOwner::Player ? sPlayer : sEnemy) = texts[7];
+            break;
         }
     }
-    else {
-        enemyReading = readings[x][y];
-        switch (shootingResult) {
-            case Game::ShootingResult::Miss: {
-                sEnemy = texts[5];
-                break;
-            }
-            case Game::ShootingResult::Hit: {
-                sEnemy = texts[6];
-                break;
-            }
-            case Game::ShootingResult::Sunk: {
-                sEnemy = texts[7];
-                break;
-            }
-        }
-    }
+}
+
+void Texts::resetTexts() {
+    playerReading = nullptr;
+    enemyReading = nullptr;
+    sPlayer = nullptr;
+    sEnemy = nullptr;
 }

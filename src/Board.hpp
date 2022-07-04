@@ -12,13 +12,12 @@
 class Board {
 private:
     SDL_Surface *board = nullptr;
-    SDL_Rect field;
 public:
     Board(MessageService *messageService);
 
     ~Board();
 
-    void update(uint8_t x, uint8_t y, Game::FieldType fieldType);
+    void update(Game::Position position, Game::FieldType fieldType);
 
     void draw(SDL_Surface *target, uint16_t x, uint16_t y);
 };

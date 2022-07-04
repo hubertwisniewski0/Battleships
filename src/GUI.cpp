@@ -35,7 +35,7 @@ void GUI::drawBoards() {
             // For each row
             for (uint8_t k = 0; k < 10; k++) {
                 f = game->getField(boardOwner, {j, k});
-                window->updateBoards(boardOwner, j, k,
+                window->updateBoards(boardOwner, {j, k},
                                      (f == Game::FieldType::Ship && boardOwner == Game::BoardOwner::Enemy &&
                                       victory == 0 ? Game::FieldType::Empty
                                                    : f));
@@ -78,13 +78,13 @@ void GUI::start() {
                 if (shootingResult == Game::ShootingResult::Invalid)
                     continue;
 
-                window->updateTexts(0, x, y, shootingResult, false);
+                window->updateTexts(Game::BoardOwner::Player, {x, y}, shootingResult);
 
                 if (game->victory(Game::BoardOwner::Enemy))
                     announceVictory(1);
                 else {
                     auto [enemyPosition, enemyShootingResult] = enemy->move();
-                    window->updateTexts(1, enemyPosition.x, enemyPosition.y, enemyShootingResult, false);
+                    window->updateTexts(Game::BoardOwner::Enemy, enemyPosition, enemyShootingResult);
                     if (game->victory(Game::BoardOwner::Player))
                         announceVictory(2);
                 }

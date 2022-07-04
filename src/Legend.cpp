@@ -17,7 +17,7 @@ Legend::Legend(MessageService *messageService, Text *text) {
     if (legendColors == nullptr)
         messageService->showMessage(MessageService::MessageType::Error,
                                     "SDL_CreateRGBSurface: " + std::string(SDL_GetError()));
-    SDL_Rect field {2,0,boardFieldWidth,boardFieldHeight};
+    SDL_Rect field{2, 0, boardFieldWidth, boardFieldHeight};
     SDL_FillRect(legendColors, nullptr, 0xFFFFFF);
     for (uint8_t i = 0; i < 5; i++) {
         field.y = i * (field.h + 2) + 2;
@@ -52,6 +52,6 @@ Legend::~Legend() {
 }
 
 void Legend::draw(SDL_Surface *target, uint16_t x, uint16_t y) {
-    SDL_Rect position {x,y};
+    SDL_Rect position{x, y};
     SDL_BlitSurface(legend, nullptr, target, &position);
 }
