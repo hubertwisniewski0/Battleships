@@ -32,7 +32,7 @@ void Window::initialize() {
     texts = new Texts(messageService, text);
 }
 
-void Window::draw(uint8_t victory) {
+void Window::draw() {
     SDL_FillRect(SDL_GetWindowSurface(window), nullptr, 0);
     for (auto &board: boards)
         board.second->draw(SDL_GetWindowSurface(window),

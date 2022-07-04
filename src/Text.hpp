@@ -13,13 +13,13 @@ private:
     TTF_Font *font = nullptr;
 
 public:
-    Text(MessageService *messageService);
+    explicit Text(MessageService *messageService);
 
     ~Text();
 
     SDL_Surface *renderText(const char *text);
 
-    void drawText(SDL_Surface *text, SDL_Surface *target, uint16_t x, uint16_t y);
+    static void drawText(SDL_Surface *text, SDL_Surface *target, uint16_t x, uint16_t y);
 
     int getMinOffset();
 };

@@ -31,7 +31,6 @@ private:
     SDL_Surface *enemyReading = nullptr;
     SDL_Surface *sPlayer = nullptr;
     SDL_Surface *sEnemy = nullptr;
-    Text *const text;
     int minOffset;
 
 public:

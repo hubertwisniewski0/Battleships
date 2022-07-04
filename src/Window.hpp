@@ -23,13 +23,13 @@ private:
     Texts *texts;
 
 public:
-    Window(MessageService *messageService);
+    explicit Window(MessageService *messageService);
 
     ~Window();
 
     void initialize();
 
-    void draw(uint8_t victory);
+    void draw();
 
     void updateBoards(Game::BoardOwner boardOwner, Game::Position position, Game::FieldType fieldType);
 

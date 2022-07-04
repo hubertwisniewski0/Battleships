@@ -32,9 +32,9 @@ Legend::Legend(MessageService *messageService, Text *text) {
     texts[6] = text->renderText("N = New game");
     texts[7] = text->renderText("ESC = Exit");
     for (uint8_t i = 0; i < 6; i++)
-        text->drawText(texts[i], legend, 45, 13 - texts[i]->h / 2 + 30 * i);
-    text->drawText(texts[6], legend, 300 - texts[6]->w, 180 - texts[7]->h - texts[6]->h);
-    text->drawText(texts[7], legend, 300 - texts[7]->w, 180 - texts[7]->h);
+        Text::drawText(texts[i], legend, 45, 13 - texts[i]->h / 2 + 30 * i);
+    Text::drawText(texts[6], legend, 300 - texts[6]->w, 180 - texts[7]->h - texts[6]->h);
+    Text::drawText(texts[7], legend, 300 - texts[7]->w, 180 - texts[7]->h);
     SDL_Rect legendColorsPosition;
     legendColorsPosition.x = 0;
     legendColorsPosition.y = 28;
@@ -46,9 +46,9 @@ Legend::~Legend() {
         SDL_FreeSurface(legend);
     if (legendColors != nullptr)
         SDL_FreeSurface(legendColors);
-    for (uint8_t i = 0; i < 8; i++)
-        if (texts[i] != nullptr)
-            SDL_FreeSurface(texts[i]);
+    for (auto &text: texts)
+        if (text != nullptr)
+            SDL_FreeSurface(text);
 }
 
 void Legend::draw(SDL_Surface *target, uint16_t x, uint16_t y) {

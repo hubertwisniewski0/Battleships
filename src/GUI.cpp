@@ -42,7 +42,7 @@ void GUI::drawBoards() {
             }
         }
     }
-    window->draw(victory);
+    window->draw();
 }
 
 void GUI::reset() {
@@ -66,7 +66,7 @@ void GUI::start() {
             if (event.type == SDL_QUIT)
                 quit = true;
             if (event.type == SDL_MOUSEMOTION)
-                window->draw(victory);
+                window->draw();
             if (event.type == SDL_MOUSEBUTTONDOWN &&
                 event.button.x - boardXOffset >= 390 && event.button.x - boardXOffset < 690 &&
                 event.button.y >= 60 && event.button.y < 360 &&

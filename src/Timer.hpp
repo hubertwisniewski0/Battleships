@@ -16,7 +16,7 @@ private:
     static void *timerCallback(void *barrier);
 
 public:
-    Timer(MessageService *messageService);
+    explicit Timer(MessageService *messageService);
 
     ~Timer();
 

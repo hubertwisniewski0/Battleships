@@ -27,7 +27,7 @@ void Timer::synchronize() {
 }
 
 void *Timer::timerCallback(void *barrier) {
-    pthread_barrier_t *barrier_c = (pthread_barrier_t *) barrier;
+    auto *barrier_c = (pthread_barrier_t *) barrier;
     while (true) {
         pthread_barrier_wait(barrier_c);
         SDL_Delay(100);

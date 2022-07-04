@@ -13,7 +13,7 @@ class Board {
 private:
     SDL_Surface *board = nullptr;
 public:
-    Board(MessageService *messageService);
+    explicit Board(MessageService *messageService);
 
     ~Board();
 

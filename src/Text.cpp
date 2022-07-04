@@ -27,9 +27,7 @@ SDL_Surface *Text::renderText(const char *text) {
 }
 
 void Text::drawText(SDL_Surface *text, SDL_Surface *target, uint16_t x, uint16_t y) {
-    SDL_Rect position;
-    position.x = x;
-    position.y = y;
+    SDL_Rect position{x, y};
     SDL_BlitSurface(text, nullptr, target, &position);
 
 }
